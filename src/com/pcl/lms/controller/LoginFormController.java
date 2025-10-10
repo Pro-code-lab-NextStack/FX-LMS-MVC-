@@ -42,9 +42,6 @@ public class LoginFormController {
     }
     private void setUi(String location) throws IOException {
         URL resource = getClass().getResource("/com/pcl/lms/view/"+location+".fxml");
-            if (resource == null) {
-                throw new IOException("Resource not found");
-            }
         Parent load = FXMLLoader.load(resource);
         Scene scene = new Scene(load);
         Stage stage= (Stage) context.getScene().getWindow();
