@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="context" prefHeight="400.0" prefWidth="336.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.LoginFormController">
    <children>
-      <Button layoutX="14.0" layoutY="10.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="133.0" style="-fx-background-color: #6c5ce7;" text="&lt;- Back to Home" textFill="WHITE">
+      <Button layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#backToHomeOnAction" prefHeight="41.0" prefWidth="133.0" style="-fx-background-color: #6c5ce7;" text="&lt;- Back to Home" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
