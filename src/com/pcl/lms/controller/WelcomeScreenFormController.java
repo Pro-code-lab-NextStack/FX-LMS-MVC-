@@ -28,14 +28,14 @@ public class WelcomeScreenFormController {
     }
 
     public void navigateLoginFormOnAction(ActionEvent actionEvent) throws IOException {
-        URL resource = getClass().getResource("/com/pcl/lms/view/LoginForm.fxml");
-        Parent load = FXMLLoader.load(resource);
-        Scene scene = new Scene(load);
-        Stage stage=(Stage) context.getScene().getWindow();
-        stage.setScene(scene);
-
+    setUi("LoginForm");
     }
 
-    public void navigateSignupFormOnAction(ActionEvent actionEvent) {
+    public void navigateSignupFormOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("SignupForm");
+    }
+    private void setUi(String location) throws IOException {
+        Stage stage =(Stage) context.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
     }
 }
