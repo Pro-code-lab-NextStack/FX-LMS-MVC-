@@ -28,8 +28,8 @@ public class LoginFormController {
 
 
 
-    public void navigateDashboardOnAction(ActionEvent actionEvent) {
-
+    public void navigateDashboardOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("DashboardForm");
     }
 
     public void navigateForgotPasswordOnAction(ActionEvent actionEvent) throws IOException {
