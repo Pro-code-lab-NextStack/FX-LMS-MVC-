@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.pcl.lms.controller.WelcomeScreenFormController"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane fx:id="context" prefHeight="400.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.WelcomeScreenFormController">
+   <children>
+      <ImageView fitHeight="253.0" fitWidth="344.0" opacity="0.79" pickOnBounds="true">
+         <image>
+            <Image url="@assets/images/welcome.jpg" />
+         </image>
+      </ImageView>
+      <Button layoutX="91.0" layoutY="262.0" mnemonicParsing="false" onAction="#navigateLoginFormOnAction" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: #00b894;" text="Login" textFill="#e1e1e1">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Button layoutX="92.0" layoutY="315.0" mnemonicParsing="false" onAction="#navigateSignupFormOnAction" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: #2d3436;" text="Sign-up" textFill="#e1e1e1">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Label fx:id="lblCompany" layoutX="14.0" layoutY="369.0" prefHeight="17.0" prefWidth="108.0" textFill="#720000" />
+      <Label fx:id="lblVersion" layoutX="236.0" layoutY="369.0" prefHeight="17.0" prefWidth="108.0" textFill="#720000" />
+   </children>
 </AnchorPane>
