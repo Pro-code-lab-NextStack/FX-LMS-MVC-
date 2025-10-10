@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,11 +19,14 @@ public class EmailVerificationFormController {
 
     }
     private void setUi(String location) throws IOException {
-        URL resource = getClass().getResource("/com/pcl/lms/view/"+location+".fxml");
+  /*      URL resource = getClass().getResource("/com/pcl/lms/view/"+location+".fxml");
         Parent load = FXMLLoader.load(resource);
         Scene scene = new Scene(load);
         Stage stage= (Stage) context.getScene().getWindow();
-        stage.setScene(scene);
+        stage.setScene(scene);*/
+        Stage stage =(Stage) context.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
     }
+
 
 }

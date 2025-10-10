@@ -8,17 +8,18 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class VerifyOTPFormController {
+public class ResetPasswordFromController {
     public AnchorPane context;
 
-    public void navigateEmailVerificationFormOnAction(ActionEvent actionEvent) throws IOException {
-        setUi("EmailVerificationForm");
-
+    public void navigateOtpVerificationForm(ActionEvent actionEvent) throws IOException {
+        setUi("VerifyOTPForm");
     }
 
-    public void navigatePasswordResetFormOnAction(ActionEvent actionEvent) throws IOException {
-        setUi("ResetPasswordForm");
+    public void resetPasswordOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("LoginForm");
     }
+
+
     private void setUi(String location) throws IOException {
         Stage stage =(Stage) context.getScene().getWindow();
         stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
