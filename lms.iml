@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javafx.base" level="application" />
+    <orderEntry type="library" name="jbcrypt-0.2" level="project" />
   </component>
 </module>

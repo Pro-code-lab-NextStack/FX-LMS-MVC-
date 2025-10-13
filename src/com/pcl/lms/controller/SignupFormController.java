@@ -2,6 +2,7 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.User;
+import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,7 +29,7 @@ public class SignupFormController {
         String email = txtEmail.getText();
         String fullName = txtFullName.getText();
         int age=Integer.parseInt(txtAge.getText());
-        String password=txtPassword.getText();
+        String password=new PasswordManager().encode(txtPassword.getText());
 
         boolean emailExists = Database.userTable.stream().anyMatch(user -> user.getEmail().equals(email));
         if (emailExists) {
