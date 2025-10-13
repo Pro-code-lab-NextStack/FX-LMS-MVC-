@@ -51,7 +51,6 @@ public class LoginFormController {
                 }
             }else {
                 new Alert(Alert.AlertType.ERROR,"User not found!!!").show();
-
             }
 
 
