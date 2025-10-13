@@ -15,7 +15,7 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <PasswordField fx:id="txtPassword" layoutX="33.0" layoutY="261.0" prefHeight="42.0" prefWidth="187.0" promptText="Password" />
+      <PasswordField fx:id="txtPassword" layoutX="33.0" layoutY="261.0" prefHeight="42.0" prefWidth="199.0" promptText="Password" />
       <TextField fx:id="txtFullName" layoutX="36.0" layoutY="68.0" prefHeight="42.0" prefWidth="199.0" promptText="Full Name" />
       <TextField fx:id="txtAge" layoutX="36.0" layoutY="126.0" prefHeight="42.0" prefWidth="199.0" promptText="Age" />
       <TextField fx:id="txtEmail" layoutX="35.0" layoutY="192.0" prefHeight="42.0" prefWidth="199.0" promptText="Email" />
@@ -25,7 +25,7 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Label layoutX="20.0" layoutY="401.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
-      <Label layoutX="169.0" layoutY="401.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
+      <Label fx:id="lblCompany" layoutX="20.0" layoutY="401.0" prefHeight="17.0" prefWidth="101.0" />
+      <Label fx:id="lblVersion" layoutX="169.0" layoutY="401.0" prefHeight="17.0" prefWidth="101.0" />
    </children>
 </AnchorPane>

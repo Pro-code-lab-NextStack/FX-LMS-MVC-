@@ -1,12 +1,14 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.env.StaticResource;
 import com.pcl.lms.model.User;
 import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -20,6 +22,17 @@ public class SignupFormController {
     public TextField txtFullName;
     public TextField txtAge;
     public TextField txtEmail;
+    public Label lblCompany;
+    public Label lblVersion;
+
+    public  void initialize(){
+        setStaticData();
+    }
+
+    private void setStaticData() {
+        lblCompany.setText(StaticResource.getCOMPANY());
+        lblVersion.setText(StaticResource.getVERSION());
+    }
 
     public void alreadyHaveAnAccountOnAction(ActionEvent actionEvent) throws IOException {
         setUi("LoginForm");
