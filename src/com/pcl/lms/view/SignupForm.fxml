@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="context" prefHeight="432.0" prefWidth="289.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.SignupFormController">
    <children>
       <Label layoutX="51.0" layoutY="24.0" text="Signup Form" textFill="#4d0404">
@@ -16,10 +15,10 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <PasswordField layoutX="40.0" layoutY="261.0" prefHeight="42.0" prefWidth="187.0" promptText="Password" />
-      <TextField layoutX="36.0" layoutY="68.0" prefHeight="42.0" prefWidth="199.0" promptText="Full Name" />
-      <TextField layoutX="36.0" layoutY="126.0" prefHeight="42.0" prefWidth="199.0" promptText="Age" />
-      <TextField layoutX="35.0" layoutY="192.0" prefHeight="42.0" prefWidth="199.0" promptText="Email" />
+      <PasswordField fx:id="txtPassword" layoutX="33.0" layoutY="261.0" prefHeight="42.0" prefWidth="187.0" promptText="Password" />
+      <TextField fx:id="txtFullName" layoutX="36.0" layoutY="68.0" prefHeight="42.0" prefWidth="199.0" promptText="Full Name" />
+      <TextField fx:id="txtAge" layoutX="36.0" layoutY="126.0" prefHeight="42.0" prefWidth="199.0" promptText="Age" />
+      <TextField fx:id="txtEmail" layoutX="35.0" layoutY="192.0" prefHeight="42.0" prefWidth="199.0" promptText="Email" />
       <Hyperlink layoutX="104.0" layoutY="313.0" onAction="#alreadyHaveAnAccountOnAction" text="already have an account" underline="true" />
       <Button layoutX="54.0" layoutY="343.0" mnemonicParsing="false" onAction="#signUpOnAction" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: #2d3436;" text="Sign-up" textFill="#e1e1e1">
          <font>
