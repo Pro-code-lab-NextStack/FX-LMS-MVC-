@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="344.0" prefWidth="514.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.DashboardFormController">
+<AnchorPane fx:id="context" prefHeight="344.0" prefWidth="514.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.DashboardFormController">
    <children>
       <Label layoutX="26.0" layoutY="21.0" text="Dashboard" textFill="#0902d7">
          <font>
@@ -24,9 +24,9 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Button layoutX="428.0" layoutY="19.0" mnemonicParsing="false" style="-fx-background-color: #2d3436;" text="Logout " textFill="WHITE" />
+      <Button layoutX="428.0" layoutY="19.0" mnemonicParsing="false" onAction="#logoutOnAction" style="-fx-background-color: #2d3436;" text="Logout " textFill="WHITE" />
       <Separator layoutX="3.0" layoutY="55.0" prefHeight="0.0" prefWidth="504.0" />
-      <Button layoutX="14.0" layoutY="69.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="97.0" style="-fx-background-color: #6c5ce7;" text="Student" textFill="WHITE">
+      <Button layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#studentManageOnAction" prefHeight="92.0" prefWidth="97.0" style="-fx-background-color: #6c5ce7;" text="Student" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
