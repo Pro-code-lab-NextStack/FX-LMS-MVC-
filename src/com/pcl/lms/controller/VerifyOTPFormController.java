@@ -15,6 +15,9 @@ public class VerifyOTPFormController {
         setUi("EmailVerificationForm");
 
     }
+    public void seteUserData(int verificationCode,String email){
+        System.out.println(verificationCode+" "+email);
+    }
 
     public void navigatePasswordResetFormOnAction(ActionEvent actionEvent) throws IOException {
         setUi("ResetPasswordForm");

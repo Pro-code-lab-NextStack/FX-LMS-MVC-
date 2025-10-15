@@ -1,12 +1,14 @@
 module lms {
+    requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
-    requires javafx.controls;
     requires jbcrypt;
+    requires jakarta.mail;
+    requires jakarta.activation;
 
-    opens com.pcl.lms to javafx.controls, javafx.fxml,javafx.graphics;
+    opens com.pcl.lms.controller to javafx.fxml;
+    opens com.pcl.lms.model to javafx.base;
 
-    //optional
 
-    exports com.pcl.lms.controller;
+     exports com.pcl.lms;
 }
