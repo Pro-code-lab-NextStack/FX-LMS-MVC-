@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="344.0" prefWidth="514.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.DashboardFormController">
    <children>
       <Label layoutX="26.0" layoutY="21.0" text="Dashboard" textFill="#0902d7">
@@ -15,12 +14,12 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="180.0" layoutY="21.0" prefHeight="21.0" prefWidth="91.0" text="....." textFill="#0d572b">
+      <Label fx:id="lblDate" layoutX="180.0" layoutY="21.0" prefHeight="21.0" prefWidth="91.0" text="....." textFill="#0d572b">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="282.0" layoutY="21.0" prefHeight="21.0" prefWidth="91.0" text="....." textFill="#57000c">
+      <Label fx:id="lblTime" layoutX="282.0" layoutY="21.0" prefHeight="21.0" prefWidth="91.0" text="....." textFill="#57000c">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
@@ -67,7 +66,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Label layoutX="42.0" layoutY="313.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
-      <Label layoutX="386.0" layoutY="313.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
+      <Label fx:id="lblCompany" layoutX="42.0" layoutY="313.0" prefHeight="17.0" prefWidth="101.0" />
+      <Label fx:id="lblVersion" layoutX="386.0" layoutY="313.0" prefHeight="17.0" prefWidth="101.0" />
    </children>
 </AnchorPane>

@@ -38,7 +38,6 @@ public class ResetPasswordFromController {
             if (txtNewPassword.getText().trim().equals(txtConfirmPassword.getText().trim())){
                 selectedUser.get().setPassword(new PasswordManager().encode(txtNewPassword.getText().trim()));
                 new Alert(Alert.AlertType.INFORMATION,"Password Reset Successful").show();
-                System.out.println(selectedUser.get().getPassword());
                 setUi("LoginForm");
 
             }else {
