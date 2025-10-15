@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="context" prefHeight="232.0" prefWidth="325.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.VerifyOTPFormController">
    <children>
       <Label layoutX="77.0" layoutY="26.0" text="Validate your OTP" textFill="#360202">
@@ -15,15 +14,15 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="27.0" layoutY="59.0" prefHeight="17.0" prefWidth="160.0" text="....." />
+      <Label fx:id="lblUserEmail" layoutX="27.0" layoutY="59.0" prefHeight="17.0" prefWidth="160.0" text="....." />
       <Hyperlink layoutX="232.0" layoutY="56.0" onAction="#navigateEmailVerificationFormOnAction" text="Change Email" />
-      <TextField layoutX="44.0" layoutY="104.0" prefHeight="39.0" prefWidth="221.0" promptText="Enter Your 6Digit OTP" />
+      <TextField fx:id="txtOtp" layoutX="44.0" layoutY="104.0" prefHeight="39.0" prefWidth="221.0" promptText="Enter Your 6Digit OTP" />
       <Button layoutX="84.0" layoutY="164.0" mnemonicParsing="false" onAction="#navigatePasswordResetFormOnAction" prefHeight="41.0" prefWidth="157.0" style="-fx-background-color: #00b894;" text="VerifyOTP" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Label layoutX="28.0" layoutY="222.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
-      <Label layoutX="197.0" layoutY="222.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
+      <Label fx:id="lblCompany" layoutX="28.0" layoutY="222.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
+      <Label fx:id="lblVersion" layoutX="197.0" layoutY="222.0" prefHeight="17.0" prefWidth="101.0" style="-fx-background-color: red;" />
    </children>
 </AnchorPane>

@@ -11,6 +11,10 @@ import java.io.IOException;
 public class ResetPasswordFromController {
     public AnchorPane context;
 
+    public void SetUserData(String email){
+        System.out.println(email);
+    }
+
     public void navigateOtpVerificationForm(ActionEvent actionEvent) throws IOException {
         setUi("VerifyOTPForm");
     }
