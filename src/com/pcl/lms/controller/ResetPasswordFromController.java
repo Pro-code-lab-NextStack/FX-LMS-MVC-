@@ -2,6 +2,7 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.User;
+import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -35,7 +36,7 @@ public class ResetPasswordFromController {
 
         if(selectedUser.isPresent()){
             if (txtNewPassword.getText().trim().equals(txtConfirmPassword.getText().trim())){
-                selectedUser.get().setPassword(txtNewPassword.getText().trim());
+                selectedUser.get().setPassword(new PasswordManager().encode(txtNewPassword.getText().trim()));
                 new Alert(Alert.AlertType.INFORMATION,"Password Reset Successful").show();
                 System.out.println(selectedUser.get().getPassword());
                 setUi("LoginForm");
