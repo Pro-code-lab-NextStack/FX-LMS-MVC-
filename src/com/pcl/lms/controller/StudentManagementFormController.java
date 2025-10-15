@@ -25,6 +25,23 @@ public class StudentManagementFormController {
         setStudentId();
     }
 
+
+
+
+    public void saveOnAction(ActionEvent actionEvent) {
+        Student student = new Student(
+                txtStudentId.getText(),
+                txtStudentName.getText(),
+                txtAddress.getText(),
+                Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        );
+        Database.studentTable.add(student);
+        System.out.println(student.toString());
+        setStudentId();
+        clearFields();
+        new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
+    }
+
     private void setStudentId() {
         if(!Database.studentTable.isEmpty()){
             Student lastStudent = Database.studentTable.get(Database.studentTable.size() - 1);
@@ -41,17 +58,9 @@ public class StudentManagementFormController {
             txtStudentId.setText("S-1");
         }
     }
-
-    public void saveOnAction(ActionEvent actionEvent) {
-        Student student = new Student(
-                txtStudentId.getText(),
-                txtStudentName.getText(),
-                txtAddress.getText(),
-                Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
-        );
-        Database.studentTable.add(student);
-        System.out.println(student.toString());
-        setStudentId();
-        new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
+    private void clearFields(){
+        txtStudentName.clear();
+        txtAddress.clear();
+        dteDob.setValue(null);
     }
 }
