@@ -19,8 +19,8 @@
       </Label>
       <Separator layoutY="52.0" prefHeight="3.0" prefWidth="600.0" style="-fx-background-color: red;" />
       <TextField fx:id="txtStudentId" editable="false" layoutX="23.0" layoutY="69.0" promptText="Sudent Id" />
-      <TextField fx:id="txtStudentName" editable="false" layoutX="197.0" layoutY="69.0" promptText="Sudent Name" />
-      <TextField fx:id="txtAddress" editable="false" layoutX="378.0" layoutY="69.0" prefHeight="25.0" prefWidth="180.0" promptText="Adress" />
+      <TextField fx:id="txtStudentName" layoutX="197.0" layoutY="69.0" promptText="Sudent Name" />
+      <TextField fx:id="txtAddress" layoutX="378.0" layoutY="69.0" prefHeight="25.0" prefWidth="180.0" promptText="Adress" />
       <DatePicker fx:id="dteDob" layoutX="23.0" layoutY="110.0" prefHeight="25.0" prefWidth="268.0" promptText="Date of Birth" />
       <TextField fx:id="txtSearch" layoutX="329.0" layoutY="110.0" prefHeight="25.0" prefWidth="174.0" promptText="Search Here" />
       <Button fx:id="btnSave" layoutX="516.0" layoutY="102.0" mnemonicParsing="false" onAction="#saveOnAction" prefHeight="33.0" prefWidth="51.0" style="-fx-background-color: #16a085;" text="Save" textFill="WHITE">

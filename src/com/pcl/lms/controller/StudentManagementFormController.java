@@ -3,10 +3,14 @@ package com.pcl.lms.controller;
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.Student;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+
+import java.time.ZoneId;
+import java.util.Date;
 
 public class StudentManagementFormController {
     public AnchorPane context;
@@ -39,6 +43,15 @@ public class StudentManagementFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
-
+        Student student = new Student(
+                txtStudentId.getText(),
+                txtStudentName.getText(),
+                txtAddress.getText(),
+                Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        );
+        Database.studentTable.add(student);
+        System.out.println(student.toString());
+        setStudentId();
+        new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
     }
 }

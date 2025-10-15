@@ -8,6 +8,16 @@ public class Student {
   private String studentAddress;
   private Date dob;//ctrl+shift+alt+t
 
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentId='" + studentId + '\'' +
+                ", studentName='" + studentName + '\'' +
+                ", studentAddress='" + studentAddress + '\'' +
+                ", dob=" + dob +
+                '}';
+    }
+
     public Student() {
     }
 
