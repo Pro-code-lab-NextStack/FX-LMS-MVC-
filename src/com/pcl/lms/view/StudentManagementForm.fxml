@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.pcl.lms.controller.StudentManagementFormController"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane fx:id="context" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.StudentManagementFormController">
+   <children>
+      <Label layoutX="23.0" layoutY="14.0" text="Student Management" textFill="#090990">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font>
+      </Label>
+      <Separator layoutY="52.0" prefHeight="3.0" prefWidth="600.0" style="-fx-background-color: red;" />
+      <TextField fx:id="txtStudentId" editable="false" layoutX="23.0" layoutY="69.0" promptText="Sudent Id" />
+      <TextField fx:id="txtStudentName" editable="false" layoutX="197.0" layoutY="69.0" promptText="Sudent Name" />
+      <TextField fx:id="txtAddress" editable="false" layoutX="378.0" layoutY="69.0" prefHeight="25.0" prefWidth="180.0" promptText="Adress" />
+      <DatePicker fx:id="dteDob" layoutX="23.0" layoutY="110.0" prefHeight="25.0" prefWidth="268.0" promptText="Date of Birth" />
+      <TextField fx:id="txtSearch" layoutX="329.0" layoutY="110.0" prefHeight="25.0" prefWidth="174.0" promptText="Search Here" />
+      <Button fx:id="btnSave" layoutX="516.0" layoutY="102.0" mnemonicParsing="false" onAction="#saveOnAction" prefHeight="33.0" prefWidth="51.0" style="-fx-background-color: #16a085;" text="Save" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+   </children>
 </AnchorPane>
