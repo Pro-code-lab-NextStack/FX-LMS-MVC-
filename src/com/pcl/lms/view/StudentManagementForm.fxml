@@ -5,10 +5,11 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-
 
 <AnchorPane fx:id="context" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.StudentManagementFormController">
    <children>
@@ -28,5 +29,14 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
+      <TableView fx:id="tblStudent" layoutX="10.0" layoutY="158.0" prefHeight="200.0" prefWidth="578.0">
+        <columns>
+          <TableColumn fx:id="colID" prefWidth="75.0" text="#Id" />
+          <TableColumn fx:id="colName" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="colAddress" prefWidth="160.0" text="Address" />
+            <TableColumn fx:id="colDob" prefWidth="136.0" text="DOB" />
+            <TableColumn fx:id="colOption" prefWidth="131.0" text="Option" />
+        </columns>
+      </TableView>
    </children>
 </AnchorPane>

@@ -2,11 +2,11 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.Student;
+import com.pcl.lms.view.tm.StudentTm;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 import java.time.ZoneId;
@@ -20,12 +20,33 @@ public class StudentManagementFormController {
     public DatePicker dteDob;
     public TextField txtSearch;
     public Button btnSave;
+    public TableView tblStudent;
+    public TableColumn colID;
+    public TableColumn colName;
+    public TableColumn colAddress;
+    public TableColumn colDob;
+    public TableColumn colOption;
 
     public void initialize(){
         setStudentId();
+        setTableData();
     }
 
-
+    private void setTableData() {
+        ObservableList<StudentTm> studentTm= FXCollections.observableArrayList();
+        for (Student st:Database.studentTable){
+            Button btn=new Button("Delete");
+            StudentTm tm=new StudentTm(
+                    st.getStudentId(),
+                    st.getStudentName(),
+                    st.getStudentAddress(),
+                    st.getDob(),
+                    btn
+            );
+            studentTm.add(tm);
+        }
+        tblStudent.setItems(studentTm);
+    }
 
 
     public void saveOnAction(ActionEvent actionEvent) {
