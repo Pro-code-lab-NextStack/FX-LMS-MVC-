@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 public class StudentManagementFormController {
     public AnchorPane context;
@@ -54,6 +55,8 @@ public class StudentManagementFormController {
         txtAddress.setText(newValue.getAddress());
 
         dteDob.setValue(LocalDate.parse(newValue.getDob()));
+        btnSave.setText("Update");
+
     }
 
     private void setTableData() {
@@ -95,12 +98,31 @@ public class StudentManagementFormController {
                 txtAddress.getText(),
                 Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
         );
-        Database.studentTable.add(student);
-        System.out.println(student.toString());
-        setStudentId();
-        clearFields();
-        new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
-        setTableData();
+        if (btnSave.getText().equals("Save")) {
+
+            Database.studentTable.add(student);
+            System.out.println(student.toString());
+            setStudentId();
+            clearFields();
+            new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
+            setTableData();
+        }else{
+            Optional<Student> selectedStudent =
+                    Database.studentTable.stream().filter(e -> e.getStudentId().equals(txtStudentId.getText()))
+                            .findFirst();
+            if (selectedStudent.isPresent()) {
+                selectedStudent.get().setStudentName(txtStudentName.getText());
+                selectedStudent.get().setStudentAddress(txtAddress.getText());
+                selectedStudent.get().setDob(Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                new Alert(Alert.AlertType.INFORMATION,"Student Updated").show();
+                setStudentId();
+                clearFields();
+                setTableData();
+                btnSave.setText("Save");
+            }
+
+        }
+
     }
 
     private void setStudentId() {
