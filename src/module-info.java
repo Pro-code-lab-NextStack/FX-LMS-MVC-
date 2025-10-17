@@ -8,6 +8,7 @@ module lms {
 
     opens com.pcl.lms.controller to javafx.fxml;
     opens com.pcl.lms.model to javafx.base;
+    opens com.pcl.lms.view.tm to javafx.base;
 
 
      exports com.pcl.lms;

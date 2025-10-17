@@ -49,6 +49,20 @@ public class StudentManagementFormController {
                     st.getDob(),
                     btn
             );
+            btn.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this student "
+                        , ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+
+                if (alert.getResult()==ButtonType.YES){
+                    Database.studentTable.remove(st);
+                    new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
+                    setTableData();
+                    setStudentId();
+                }
+
+
+            });
             studentTm.add(tm);
         }
         tblStudent.setItems(studentTm);
