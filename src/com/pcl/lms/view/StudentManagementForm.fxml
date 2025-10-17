@@ -24,7 +24,7 @@
       <TextField fx:id="txtAddress" layoutX="378.0" layoutY="69.0" prefHeight="25.0" prefWidth="180.0" promptText="Adress" />
       <DatePicker fx:id="dteDob" layoutX="23.0" layoutY="110.0" prefHeight="25.0" prefWidth="268.0" promptText="Date of Birth" />
       <TextField fx:id="txtSearch" layoutX="329.0" layoutY="110.0" prefHeight="25.0" prefWidth="174.0" promptText="Search Here" />
-      <Button fx:id="btnSave" layoutX="516.0" layoutY="102.0" mnemonicParsing="false" onAction="#saveOnAction" prefHeight="33.0" prefWidth="51.0" style="-fx-background-color: #16a085;" text="Save" textFill="WHITE">
+      <Button fx:id="btnSave" layoutX="516.0" layoutY="102.0" mnemonicParsing="false" onAction="#saveOnAction" prefHeight="33.0" prefWidth="67.0" style="-fx-background-color: #16a085;" text="Save" textFill="WHITE">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -38,5 +38,15 @@
             <TableColumn fx:id="colOption" prefWidth="131.0" text="Option" />
         </columns>
       </TableView>
+      <Button layoutX="491.0" layoutY="14.0" mnemonicParsing="false" onAction="#newStudentOnAction" prefHeight="33.0" prefWidth="94.0" style="-fx-background-color: #2980b9;" text="New Student" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button layoutX="386.0" layoutY="14.0" mnemonicParsing="false" onAction="#backToHomeOnAction" prefHeight="33.0" prefWidth="94.0" style="-fx-background-color: #2c3e50;" text="Back to Home" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
    </children>
 </AnchorPane>

@@ -6,10 +6,14 @@ import com.pcl.lms.view.tm.StudentTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -154,5 +158,17 @@ public class StudentManagementFormController {
         txtStudentName.clear();
         txtAddress.clear();
         dteDob.setValue(null);
+    }
+
+    public void newStudentOnAction(ActionEvent actionEvent) {
+        clearFields();
+    }
+
+    public void backToHomeOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("DashboardForm");
+    }
+    private void setUi(String location) throws IOException {
+        Stage stage =(Stage) context.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
     }
 }
