@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
 import java.time.ZoneId;
@@ -20,14 +21,19 @@ public class StudentManagementFormController {
     public DatePicker dteDob;
     public TextField txtSearch;
     public Button btnSave;
-    public TableView tblStudent;
-    public TableColumn colID;
-    public TableColumn colName;
-    public TableColumn colAddress;
-    public TableColumn colDob;
-    public TableColumn colOption;
+    public TableView <StudentTm> tblStudent;
+    public TableColumn<StudentTm,String> colID;
+    public TableColumn<StudentTm,String> colName;
+    public TableColumn<StudentTm,String> colAddress;
+    public TableColumn<StudentTm,Date> colDob;
+    public TableColumn<StudentTm,Button> colOption;
 
     public void initialize(){
+        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        colDob.setCellValueFactory(new PropertyValueFactory<>("dob"));
+        colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setStudentId();
         setTableData();
     }
@@ -49,6 +55,7 @@ public class StudentManagementFormController {
     }
 
 
+
     public void saveOnAction(ActionEvent actionEvent) {
         Student student = new Student(
                 txtStudentId.getText(),
@@ -61,6 +68,7 @@ public class StudentManagementFormController {
         setStudentId();
         clearFields();
         new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
+        setTableData();
     }
 
     private void setStudentId() {
