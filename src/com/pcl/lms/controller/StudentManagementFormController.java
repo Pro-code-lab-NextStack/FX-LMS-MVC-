@@ -30,6 +30,7 @@ public class StudentManagementFormController {
     public TableColumn<StudentTm,String> colAddress;
     public TableColumn<StudentTm,Date> colDob;
     public TableColumn<StudentTm,Button> colOption;
+    String searchText="";
 
     public void initialize(){
         colID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -38,7 +39,7 @@ public class StudentManagementFormController {
         colDob.setCellValueFactory(new PropertyValueFactory<>("dob"));
         colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setStudentId();
-        setTableData();
+        setTableData(searchText);
 
         tblStudent.getSelectionModel().selectedItemProperty().addListener
                 ((observable, oldValue, newValue) -> {
@@ -47,6 +48,11 @@ public class StudentManagementFormController {
                     }
 
         });
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+                this.searchText = newValue;
+                setTableData(newValue);
+        });
+
     }
 
     private void setData(StudentTm newValue) {
@@ -59,32 +65,35 @@ public class StudentManagementFormController {
 
     }
 
-    private void setTableData() {
+    private void setTableData(String newValue) {
         ObservableList<StudentTm> studentTm= FXCollections.observableArrayList();
         for (Student st:Database.studentTable){
-            Button btn=new Button("Delete");
-            StudentTm tm=new StudentTm(
-                    st.getStudentId(),
-                    st.getStudentName(),
-                    st.getStudentAddress(),
-                    new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()),
-                    btn
-            );
-            btn.setOnAction(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this student "
-                        , ButtonType.YES, ButtonType.NO);
-                alert.showAndWait();
+            if (st.getStudentName().contains(newValue)){
+                Button btn=new Button("Delete");
+                StudentTm tm=new StudentTm(
+                        st.getStudentId(),
+                        st.getStudentName(),
+                        st.getStudentAddress(),
+                        new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()),
+                        btn
+                );
+                btn.setOnAction(event -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this student "
+                            , ButtonType.YES, ButtonType.NO);
+                    alert.showAndWait();
 
-                if (alert.getResult()==ButtonType.YES){
-                    Database.studentTable.remove(st);
-                    new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
-                    setTableData();
-                    setStudentId();
-                }
+                    if (alert.getResult()==ButtonType.YES){
+                        Database.studentTable.remove(st);
+                        new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
+                        setTableData(searchText);
+                        setStudentId();
+                    }
 
 
-            });
-            studentTm.add(tm);
+                });
+                studentTm.add(tm);
+            }
+
         }
         tblStudent.setItems(studentTm);
     }
@@ -105,7 +114,7 @@ public class StudentManagementFormController {
             setStudentId();
             clearFields();
             new Alert(Alert.AlertType.INFORMATION,"Student Saved").show();
-            setTableData();
+            setTableData(searchText);
         }else{
             Optional<Student> selectedStudent =
                     Database.studentTable.stream().filter(e -> e.getStudentId().equals(txtStudentId.getText()))
@@ -117,7 +126,7 @@ public class StudentManagementFormController {
                 new Alert(Alert.AlertType.INFORMATION,"Student Updated").show();
                 setStudentId();
                 clearFields();
-                setTableData();
+                setTableData(searchText);
                 btnSave.setText("Save");
             }
 
