@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -36,6 +37,22 @@ public class StudentManagementFormController {
         colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setStudentId();
         setTableData();
+
+        tblStudent.getSelectionModel().selectedItemProperty().addListener
+                ((observable, oldValue, newValue) -> {
+                    if(newValue != null){
+                        setData((StudentTm)newValue);
+                    }
+
+        });
+    }
+
+    private void setData(StudentTm newValue) {
+        txtStudentId.setText(newValue.getId());
+        txtStudentName.setText(newValue.getName());
+        txtAddress.setText(newValue.getAddress());
+
+        //dteDob.setValue(newValue.getDob());
     }
 
     private void setTableData() {
@@ -46,7 +63,7 @@ public class StudentManagementFormController {
                     st.getStudentId(),
                     st.getStudentName(),
                     st.getStudentAddress(),
-                    st.getDob(),
+                    new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()),
                     btn
             );
             btn.setOnAction(event -> {

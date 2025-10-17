@@ -8,13 +8,13 @@ public class StudentTm {
     private String id;
     private String name;
     private String address;
-    private Date dob;
+    private String dob;
     private Button btn;
 
     public StudentTm() {
     }
 
-    public StudentTm(String id, String name, String address, Date dob, Button btn) {
+    public StudentTm(String id, String name, String address, String dob, Button btn) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -46,11 +46,11 @@ public class StudentTm {
         this.address = address;
     }
 
-    public Date getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 
