@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -52,7 +53,7 @@ public class StudentManagementFormController {
         txtStudentName.setText(newValue.getName());
         txtAddress.setText(newValue.getAddress());
 
-        //dteDob.setValue(newValue.getDob());
+        dteDob.setValue(LocalDate.parse(newValue.getDob()));
     }
 
     private void setTableData() {
