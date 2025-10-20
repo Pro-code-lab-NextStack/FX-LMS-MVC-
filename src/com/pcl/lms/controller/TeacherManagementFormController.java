@@ -6,10 +6,14 @@ import com.pcl.lms.view.tm.TeacherTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -109,9 +113,12 @@ public class TeacherManagementFormController {
     }
 
     public void newTeacherOnAction(ActionEvent actionEvent) {
+        clearFields();
+        btnSave.setText("Save");
     }
 
-    public void backToHomeOnAction(ActionEvent actionEvent) {
+    public void backToHomeOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("DashboardForm");
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
@@ -152,5 +159,9 @@ public class TeacherManagementFormController {
         txtTeacherName.clear();
         txtContact.clear();
         txtAddress.clear();
+    }
+    private void setUi(String location) throws IOException {
+        Stage stage =(Stage) context.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
     }
 }
