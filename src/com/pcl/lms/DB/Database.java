@@ -1,5 +1,6 @@
 package com.pcl.lms.DB;
 
+import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
 import com.pcl.lms.model.Teacher;
 import com.pcl.lms.model.User;
@@ -13,6 +14,7 @@ public class Database {
     public static ArrayList<User> userTable=new ArrayList<>();
     public static ArrayList <Student> studentTable=new ArrayList<>();
     public static ArrayList <Teacher> teacherTable=new ArrayList<>();
+    public static ArrayList<Programme> programmeTable=new ArrayList<>();
    static {
         userTable.add(new User(new PasswordManager().encode("1234"),27,"darkcreationsl98@gmail.com","gihan viraj"));
 
