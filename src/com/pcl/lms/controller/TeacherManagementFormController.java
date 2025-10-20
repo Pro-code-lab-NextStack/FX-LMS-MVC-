@@ -36,23 +36,44 @@ public class TeacherManagementFormController {
         colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setTeacherId();
         setTeacherData(searchText);
+
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue!=null){
+                this.searchText=newValue;
+                setTeacherData(searchText);
+            }
+        });
     }
 
     private void setTeacherData(String searchText) {
         ObservableList <TeacherTm> teacherObList = FXCollections.observableArrayList();
 
         for (Teacher teacher:Database.teacherTable){
-            Button btn = new Button("Delete");
-            TeacherTm teacherTm = new TeacherTm(
-                    teacher.getId(),
-                    teacher.getName(),
-                    teacher.getAddress(),
-                    teacher.getContact(),
-                    btn
+            if(teacher.getName().toLowerCase().contains(searchText.toLowerCase())){
+                Button btn = new Button("Delete");
+                TeacherTm teacherTm = new TeacherTm(
+                        teacher.getId(),
+                        teacher.getName(),
+                        teacher.getAddress(),
+                        teacher.getContact(),
+                        btn
+                );
+                btn.setOnAction((event) -> {
+                    Alert alert=new Alert
+                            (Alert.AlertType.CONFIRMATION,"Are you sure you want to delete this teacher?"
+                                    ,ButtonType.YES,ButtonType.NO);
+                    alert.showAndWait();
+                    if(alert.getResult()==ButtonType.YES){
+                        Database.teacherTable.remove(teacher);
+                        setTeacherData(searchText);
+                        setTeacherId();
+                        new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
+                    }
+                });
+                teacherObList.add(teacherTm);
+            }
 
 
-            );
-            teacherObList.add(teacherTm);
 
         }
         tblTeacher.setItems(teacherObList);
@@ -89,9 +110,16 @@ public class TeacherManagementFormController {
            Database.teacherTable.add(teacher);
            setTeacherId();
            setTeacherData(searchText);
+           clearFields();
             new Alert(Alert.AlertType.INFORMATION, "Teacher Saved").show();
         }else{
            // update
         }
+    }
+
+    private void clearFields() {
+        txtTeacherName.clear();
+        txtTeacherId.clear();
+        txtContact.clear();
     }
 }
