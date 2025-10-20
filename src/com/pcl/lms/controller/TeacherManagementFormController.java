@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class TeacherManagementFormController {
     public AnchorPane context;
@@ -43,6 +44,20 @@ public class TeacherManagementFormController {
                 setTeacherData(searchText);
             }
         });
+        tblTeacher.getSelectionModel().selectedItemProperty().addListener
+                ((observable, oldValue, newValue) -> {
+            if(newValue!=null){
+                setData((TeacherTm)newValue);
+            }
+        });
+    }
+
+    private void setData(TeacherTm tm) {
+        txtTeacherId.setText(tm.getId());
+        txtTeacherName.setText(tm.getName());
+        txtContact.setText(tm.getContact());
+        txtAddress.setText(tm.getAddress());
+        btnSave.setText("Update");
     }
 
     private void setTeacherData(String searchText) {
@@ -100,26 +115,42 @@ public class TeacherManagementFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
+        Teacher teacher = new Teacher(
+                txtTeacherName.getText(),
+                txtTeacherId.getText(),
+                txtContact.getText(),
+                txtAddress.getText()
+        );
         if (btnSave.getText().equals("Save")) {
-           Teacher teacher = new Teacher(
-                   txtTeacherName.getText(),
-                   txtTeacherId.getText(),
-                   txtContact.getText(),
-                   txtAddress.getText()
-           );
+
            Database.teacherTable.add(teacher);
            setTeacherId();
            setTeacherData(searchText);
            clearFields();
             new Alert(Alert.AlertType.INFORMATION, "Teacher Saved").show();
         }else{
-           // update
+            Optional<Teacher> selectedTeacher = Database.teacherTable.stream().filter
+                    (e -> e.getId().equals(teacher.getId())).findFirst();
+            if(!selectedTeacher.isPresent()){
+               new Alert(Alert.AlertType.INFORMATION, "Teacher Not Found").show();
+               return;
+            }
+            selectedTeacher.get().setName(teacher.getName());
+            selectedTeacher.get().setAddress(teacher.getAddress());
+            selectedTeacher.get().setAddress(teacher.getAddress());
+            setTeacherData(searchText);
+            setTeacherId();
+            clearFields();
+            setTeacherId();
+            btnSave.setText("Save");
+            new Alert(Alert.AlertType.INFORMATION, "Teacher Updated").show();
+
         }
     }
 
     private void clearFields() {
         txtTeacherName.clear();
-        txtTeacherId.clear();
         txtContact.clear();
+        txtAddress.clear();
     }
 }
