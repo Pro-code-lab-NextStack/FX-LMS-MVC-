@@ -62,4 +62,7 @@ public class DashboardFormController {
     }
 
 
+    public void navigateProgramFormOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("ProgramManagementForm");
+    }
 }

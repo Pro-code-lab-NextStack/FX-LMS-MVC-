@@ -58,7 +58,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="253.0" layoutY="69.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="105.0" style="-fx-background-color: #ff7675;" text="Programs" textFill="WHITE">
+      <Button layoutX="253.0" layoutY="69.0" mnemonicParsing="false" onAction="#navigateProgramFormOnAction" prefHeight="92.0" prefWidth="105.0" style="-fx-background-color: #ff7675;" text="Programs" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="580.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.ProgramManagementFormController">
+   <children>
+      <Label layoutX="36.0" layoutY="14.0" text="Program Management" textFill="#090990">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtProgramId" editable="false" layoutX="19.0" layoutY="69.0" prefHeight="25.0" prefWidth="100.0" promptText="Program Id" />
+      <TextField fx:id="txtProgramName" layoutX="145.0" layoutY="69.0" promptText="Program Name" />
+      <Button layoutX="504.0" layoutY="12.0" mnemonicParsing="false" onAction="#newProgramOnAction" prefHeight="33.0" prefWidth="94.0" style="-fx-background-color: #2980b9;" text="New Program" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button layoutX="399.0" layoutY="12.0" mnemonicParsing="false" onAction="#backToHomeOnAction" prefHeight="33.0" prefWidth="94.0" style="-fx-background-color: #2c3e50;" text="Back to Home" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Separator layoutX="8.0" layoutY="50.0" prefHeight="0.0" prefWidth="591.0" />
+      <TextField fx:id="txtCost" layoutX="304.0" layoutY="69.0" prefHeight="25.0" prefWidth="113.0" promptText="Cost" />
+      <ComboBox fx:id="cbxTeacher" layoutX="429.0" layoutY="69.0" prefWidth="150.0" promptText="Teacher" />
+      <TextField fx:id="txtModules" layoutX="22.0" layoutY="109.0" promptText="Modules" />
+      <TableView fx:id="tblModule" layoutX="21.0" layoutY="149.0" prefHeight="140.0" prefWidth="563.0">
+        <columns>
+          <TableColumn fx:id="colModuleId" prefWidth="75.0" text="Id" />
+          <TableColumn fx:id="colModuleName" prefWidth="243.0" text="Module Name" />
+            <TableColumn fx:id="colModuleRemove" prefWidth="244.0" text="Remove" />
+        </columns>
+      </TableView>
+      <Button fx:id="btnSave" layoutX="493.0" layoutY="308.0" mnemonicParsing="false" onAction="#saveOnAction" prefHeight="33.0" prefWidth="67.0" style="-fx-background-color: #16a085;" text="Save" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <TableView fx:id="tblProgramme" layoutX="19.0" layoutY="357.0" prefHeight="200.0" prefWidth="555.0">
+        <columns>
+          <TableColumn fx:id="colProgrammeId" prefWidth="75.0" text="#Id" />
+          <TableColumn fx:id="colProgrammeName" prefWidth="122.0" text="Program Name" />
+            <TableColumn fx:id="colTeacher" prefWidth="99.0" text="Teacher" />
+            <TableColumn fx:id="colModuleList" prefWidth="99.0" text="Modules" />
+            <TableColumn fx:id="colCost" prefWidth="77.0" text="Cost" />
+            <TableColumn fx:id="colOption" prefWidth="82.0" text="Option" />
+        </columns>
+      </TableView>
+      <TextField fx:id="txtSearch" layoutX="22.0" layoutY="312.0" prefHeight="25.0" prefWidth="197.0" promptText="Search Programme" />
+   </children>
+</AnchorPane>
