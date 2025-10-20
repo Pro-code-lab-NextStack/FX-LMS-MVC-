@@ -2,9 +2,15 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.Teacher;
+import com.pcl.lms.view.tm.TeacherTm;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+
+import java.util.Objects;
 
 public class TeacherManagementFormController {
     public AnchorPane context;
@@ -14,15 +20,42 @@ public class TeacherManagementFormController {
     public Button btnSave;
     public TextField txtAddress;
     public TextField txtSearch;
-    public TableView tblTeacher;
-    public TableColumn colId;
-    public TableColumn colName;
-    public TableColumn colContact;
-    public TableColumn colAddress;
-    public TableColumn colOption;
+    public TableView <TeacherTm>tblTeacher;
+    public TableColumn<TeacherTm,String> colId;
+    public TableColumn<TeacherTm,String> colName;
+    public TableColumn <TeacherTm,String>colContact;
+    public TableColumn<TeacherTm,String> colAddress;
+    public TableColumn<TeacherTm,Button> colOption;
+    String searchText="";
 
     public void initialize(){
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colContact.setCellValueFactory(new PropertyValueFactory<>("contact"));
+        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setTeacherId();
+        setTeacherData(searchText);
+    }
+
+    private void setTeacherData(String searchText) {
+        ObservableList <TeacherTm> teacherObList = FXCollections.observableArrayList();
+
+        for (Teacher teacher:Database.teacherTable){
+            Button btn = new Button("Delete");
+            TeacherTm teacherTm = new TeacherTm(
+                    teacher.getId(),
+                    teacher.getName(),
+                    teacher.getAddress(),
+                    teacher.getContact(),
+                    btn
+
+
+            );
+            teacherObList.add(teacherTm);
+
+        }
+        tblTeacher.setItems(teacherObList);
     }
 
     private void setTeacherId() {
@@ -55,6 +88,7 @@ public class TeacherManagementFormController {
            );
            Database.teacherTable.add(teacher);
            setTeacherId();
+           setTeacherData(searchText);
             new Alert(Alert.AlertType.INFORMATION, "Teacher Saved").show();
         }else{
            // update
