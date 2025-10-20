@@ -50,7 +50,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="132.0" layoutY="69.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="97.0" style="-fx-background-color: #00b894;" text="Teacher" textFill="WHITE">
+      <Button layoutX="132.0" layoutY="69.0" mnemonicParsing="false" onAction="#navigateTeacherFormOnAction" prefHeight="92.0" prefWidth="97.0" style="-fx-background-color: #00b894;" text="Teacher" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
