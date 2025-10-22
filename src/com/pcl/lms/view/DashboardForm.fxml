@@ -34,7 +34,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="380.0" layoutY="69.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="113.0" style="-fx-background-color: #0984e3;" text="Intake" textFill="WHITE">
+      <Button layoutX="380.0" layoutY="69.0" mnemonicParsing="false" onAction="#navigateIntakeFormOnAction" prefHeight="92.0" prefWidth="113.0" style="-fx-background-color: #0984e3;" text="Intake" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
@@ -42,7 +42,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="36.0" layoutY="191.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="413.0" style="-fx-background-color: #B33771;" text="Student Registration" textFill="WHITE">
+      <Button layoutX="36.0" layoutY="191.0" mnemonicParsing="false" onAction="#navigateStudentRegOnAction" prefHeight="92.0" prefWidth="413.0" style="-fx-background-color: #B33771;" text="Student Registration" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
