@@ -38,8 +38,9 @@ public class ProgramManagementFormController {
     public TableColumn <ProgrammeTm,Double> colCost;
     public TableColumn <ProgrammeTm,Button> colOption;
     public TextField txtSearch;
-    static ArrayList <Modules> modList=new ArrayList<>();
+     ArrayList <Modules> modList=new ArrayList<>();
     public AnchorPane context;
+   static ObservableList<ModulesTm> list = FXCollections.observableArrayList();
 
     public void initialize() {
         colModuleId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -82,6 +83,16 @@ public class ProgramManagementFormController {
                     setProgrammeId();
                     new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
                 }
+            });
+            btnModule.setOnAction(event -> {
+                try{
+                    Stage stage = new Stage();
+                    stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/ModulePopUp.fxml"))));
+                    stage.show();
+                }catch (IOException e){
+                    throw new RuntimeException(e);
+                }
+
             });
 
 
@@ -171,7 +182,7 @@ public class ProgramManagementFormController {
     }
 
     private void setModuleTableData() {
-       ObservableList<ModulesTm> list = FXCollections.observableArrayList();
+
         for (Modules modules:modList){
             Button btn=new Button("Delete");
             list.add(new ModulesTm(
