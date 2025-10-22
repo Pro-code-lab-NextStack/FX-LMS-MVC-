@@ -38,10 +38,11 @@ public class ProgramManagementFormController {
     public TableColumn<ProgrammeTm,Button> colModuleList;
     public TableColumn <ProgrammeTm,Double> colCost;
     public TableColumn <ProgrammeTm,Button> colOption;
+    public AnchorPane context;
     public TextField txtSearch;
      ArrayList <Modules> modList=new ArrayList<>();
-    public AnchorPane context;
    static ObservableList<ModulesTm> list = FXCollections.observableArrayList();
+   private String searchText="";
 
     public void initialize() {
         colModuleId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -60,9 +61,12 @@ public class ProgramManagementFormController {
                             setData((ProgrammeTm)newValue);
                         }
         });
-
+        txtSearch.textProperty().addListener((observable,oldValue,newValue)->{
+                searchText=newValue;
+                loadProgrammeData(searchText);
+        });
         setModuleTableData();
-        loadProgrammeData();
+        loadProgrammeData(searchText);
         setProgrammeId();
         setTeacher();
     }
@@ -75,41 +79,44 @@ public class ProgramManagementFormController {
         txtCost.setText(Double.toString(tm.getCost()));
     }
 
-    private void loadProgrammeData() {
+    private void loadProgrammeData(String searchText) {
         ObservableList <ProgrammeTm> programsObList=FXCollections.observableArrayList();
         for (Programme temp:Database.programmeTable){
-            Button btnModule=new Button("Module");
-            Button btnDelete=new Button("Delete");
-            programsObList.add(
-                    new ProgrammeTm(
-                            temp.getProgrammeId(),
-                            temp.getProgrammeName(),
-                            temp.getTeacher(),
-                            btnModule,
-                            temp.getCost(),
-                            btnDelete
-                    )
-            );
-            btnDelete.setOnAction(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure",ButtonType.YES,ButtonType.NO);
-                alert.showAndWait();
-                if (alert.getResult()==ButtonType.YES){
-                    Database.programmeTable.remove(temp);
-                    loadProgrammeData();
-                    setProgrammeId();
-                    new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
-                }
-            });
-            btnModule.setOnAction(event -> {
-                try{
-                    Stage stage = new Stage();
-                    stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/ModulePopUp.fxml"))));
-                    stage.show();
-                }catch (IOException e){
-                    throw new RuntimeException(e);
-                }
+            if (temp.getProgrammeName().contains(searchText)){
+                Button btnModule=new Button("Module");
+                Button btnDelete=new Button("Delete");
+                programsObList.add(
+                        new ProgrammeTm(
+                                temp.getProgrammeId(),
+                                temp.getProgrammeName(),
+                                temp.getTeacher(),
+                                btnModule,
+                                temp.getCost(),
+                                btnDelete
+                        )
+                );
+                btnDelete.setOnAction(event -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure",ButtonType.YES,ButtonType.NO);
+                    alert.showAndWait();
+                    if (alert.getResult()==ButtonType.YES){
+                        Database.programmeTable.remove(temp);
+                        loadProgrammeData(searchText);
+                        setProgrammeId();
+                        new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
+                    }
+                });
+                btnModule.setOnAction(event -> {
+                    try{
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/ModulePopUp.fxml"))));
+                        stage.show();
+                    }catch (IOException e){
+                        throw new RuntimeException(e);
+                    }
 
-            });
+                });
+            }
+
 
 
         }
@@ -160,7 +167,7 @@ public class ProgramManagementFormController {
             ));
             setProgrammeId();
             clearFields();
-            loadProgrammeData();
+            loadProgrammeData(searchText);
             new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
         }else {
             Optional<Programme> selectedProgramme = Database.programmeTable.stream().filter
@@ -172,7 +179,7 @@ public class ProgramManagementFormController {
                 selectedProgramme.get().setTeacher(cbxTeacher.getValue());
                 selectedProgramme.get().setModule(selectedModules);
                 new Alert(Alert.AlertType.INFORMATION, "Programme Updated"+txtProgramId.getText()).show();
-                loadProgrammeData();
+                loadProgrammeData(searchText);
                 clearFields();
                 btnSave.setText("Save");
             }
@@ -210,6 +217,7 @@ public class ProgramManagementFormController {
     }
 
     private void setModuleTableData() {
+        list.clear();
 
         for (Modules modules:modList){
             Button btn=new Button("Delete");
