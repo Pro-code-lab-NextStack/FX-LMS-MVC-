@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ProgramManagementFormController {
     public TextField txtProgramId;
@@ -53,10 +54,25 @@ public class ProgramManagementFormController {
         colModuleList.setCellValueFactory(new PropertyValueFactory<>("btnModules"));
         colCost.setCellValueFactory(new PropertyValueFactory<>("cost"));
         colOption.setCellValueFactory(new PropertyValueFactory<>("btnDelete"));
+        tblProgramme.getSelectionModel().selectedItemProperty().addListener
+                ((observableValue,oldValue,newValue)->{
+                        if (newValue!=null){
+                            setData((ProgrammeTm)newValue);
+                        }
+        });
+
         setModuleTableData();
         loadProgrammeData();
         setProgrammeId();
         setTeacher();
+    }
+
+    private void setData(ProgrammeTm tm) {
+        btnSave.setText("Update");
+        txtProgramId.setText(tm.getProgrammeId());
+        txtProgramName.setText(tm.getProgrammeName());
+        cbxTeacher.setValue(tm.getTeacher());
+        txtCost.setText(Double.toString(tm.getCost()));
     }
 
     private void loadProgrammeData() {
@@ -147,7 +163,19 @@ public class ProgramManagementFormController {
             loadProgrammeData();
             new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
         }else {
-            //update
+            Optional<Programme> selectedProgramme = Database.programmeTable.stream().filter
+                    (e -> e.getProgrammeId().equals(txtProgramId.getText())).findFirst();
+
+            if (selectedProgramme.isPresent()) {
+                selectedProgramme.get().setProgrammeName(txtProgramName.getText());
+                selectedProgramme.get().setCost(Double.parseDouble(txtCost.getText()));
+                selectedProgramme.get().setTeacher(cbxTeacher.getValue());
+                selectedProgramme.get().setModule(selectedModules);
+                new Alert(Alert.AlertType.INFORMATION, "Programme Updated"+txtProgramId.getText()).show();
+                loadProgrammeData();
+                clearFields();
+                btnSave.setText("Save");
+            }
         }
 
     }
