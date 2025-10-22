@@ -99,6 +99,14 @@ public class ProgramManagementFormController {
                     btn
 
             ));
+            btn.setOnAction(event -> {
+               Alert alert=new Alert(Alert.AlertType.CONFIRMATION,"Are you sure?..",ButtonType.YES,ButtonType.NO);
+               alert.showAndWait();
+               if (alert.getResult()==ButtonType.YES){
+                   modList.remove(modules);
+                   setModuleTableData();
+               }
+            });
 
         }
 
