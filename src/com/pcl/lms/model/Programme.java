@@ -7,6 +7,17 @@ public class Programme {
     private String teacher;
     private String [] module;
 
+    public Programme() {
+    }
+
+    public Programme(String programmeId, String programmeName, double cost, String teacher, String[] module) {
+        this.programmeId = programmeId;
+        this.programmeName = programmeName;
+        this.cost = cost;
+        this.teacher = teacher;
+        this.module = module;
+    }
+
     public String getProgrammeId() {
         return programmeId;
     }
