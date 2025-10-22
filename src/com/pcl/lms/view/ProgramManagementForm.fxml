@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="580.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcl.lms.controller.ProgramManagementFormController">
    <children>
       <Label layoutX="36.0" layoutY="14.0" text="Program Management" textFill="#090990">
@@ -34,7 +33,7 @@
       <Separator layoutX="8.0" layoutY="50.0" prefHeight="0.0" prefWidth="591.0" />
       <TextField fx:id="txtCost" layoutX="304.0" layoutY="69.0" prefHeight="25.0" prefWidth="113.0" promptText="Cost" />
       <ComboBox fx:id="cbxTeacher" layoutX="429.0" layoutY="69.0" prefWidth="150.0" promptText="Teacher" />
-      <TextField fx:id="txtModules" layoutX="22.0" layoutY="109.0" promptText="Modules" />
+      <TextField fx:id="txtModules" layoutX="22.0" layoutY="109.0" onAction="#addModulesOnAction" promptText="Modules" />
       <TableView fx:id="tblModule" layoutX="21.0" layoutY="149.0" prefHeight="140.0" prefWidth="563.0">
         <columns>
           <TableColumn fx:id="colModuleId" prefWidth="75.0" text="Id" />
