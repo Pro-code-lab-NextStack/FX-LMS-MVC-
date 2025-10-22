@@ -5,12 +5,18 @@ import com.pcl.lms.model.Modules;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Teacher;
 import com.pcl.lms.view.tm.ModulesTm;
+import com.pcl.lms.view.tm.ProgrammeTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProgramManagementFormController {
@@ -24,22 +30,53 @@ public class ProgramManagementFormController {
     public TableColumn <ModulesTm,String> colModuleName;
     public TableColumn<ModulesTm,Button> colModuleRemove;
     public Button btnSave;
-    public TableView tblProgramme;
-    public TableColumn colProgrammeId;
-    public TableColumn colProgrammeName;
-    public TableColumn colTeacher;
-    public TableColumn colModuleList;
-    public TableColumn colCost;
-    public TableColumn colOption;
+    public TableView<ProgrammeTm> tblProgramme;
+    public TableColumn<ProgrammeTm,String> colProgrammeId;
+    public TableColumn <ProgrammeTm,String> colProgrammeName;
+    public TableColumn <ProgrammeTm,String> colTeacher;
+    public TableColumn<ProgrammeTm,Button> colModuleList;
+    public TableColumn <ProgrammeTm,Double> colCost;
+    public TableColumn <ProgrammeTm,Button> colOption;
     public TextField txtSearch;
     static ArrayList <Modules> modList=new ArrayList<>();
+    public AnchorPane context;
+
     public void initialize() {
         colModuleId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colModuleName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colModuleRemove.setCellValueFactory(new PropertyValueFactory<>("btn"));
+
+        colProgrammeId.setCellValueFactory(new PropertyValueFactory<>("programmeId"));
+        colProgrammeName.setCellValueFactory(new PropertyValueFactory<>("programmeName"));
+        colTeacher.setCellValueFactory(new PropertyValueFactory<>("teacher"));
+        colModuleList.setCellValueFactory(new PropertyValueFactory<>("btnModules"));
+        colCost.setCellValueFactory(new PropertyValueFactory<>("cost"));
+        colOption.setCellValueFactory(new PropertyValueFactory<>("btnDelete"));
         setModuleTableData();
+        loadProgrammeData();
         setProgrammeId();
         setTeacher();
+    }
+
+    private void loadProgrammeData() {
+        ObservableList <ProgrammeTm> programsObList=FXCollections.observableArrayList();
+        for (Programme temp:Database.programmeTable){
+            Button btnModule=new Button("Module");
+            Button btnDelete=new Button("Delete");
+            programsObList.add(
+                    new ProgrammeTm(
+                            temp.getProgrammeId(),
+                            temp.getProgrammeName(),
+                            temp.getTeacher(),
+                            btnModule,
+                            temp.getCost(),
+                            btnDelete
+                    )
+            );
+
+
+        }
+        tblProgramme.setItems(programsObList);
     }
 
     private void setTeacher() {
@@ -86,6 +123,7 @@ public class ProgramManagementFormController {
             ));
             setProgrammeId();
             clearFields();
+            loadProgrammeData();
             new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
         }else {
             //update
@@ -103,10 +141,12 @@ public class ProgramManagementFormController {
         cbxTeacher.setValue("Teachers");
     }
 
-    public void backToHomeOnAction(ActionEvent actionEvent) {
+    public void backToHomeOnAction(ActionEvent actionEvent) throws IOException {
+        setUi("DashboardForm");
     }
 
     public void newProgramOnAction(ActionEvent actionEvent) {
+        clearFields();
     }
 
     public void addModulesOnAction(ActionEvent actionEvent) {
@@ -153,5 +193,9 @@ public class ProgramManagementFormController {
         int lastId = lastModule.getId();
         lastId++;
         return lastId;
+    }
+    private void setUi(String location) throws IOException {
+        Stage stage =(Stage) context.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
     }
 }
