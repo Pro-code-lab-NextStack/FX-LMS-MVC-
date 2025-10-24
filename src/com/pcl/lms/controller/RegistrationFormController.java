@@ -2,6 +2,7 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.model.Programme;
+import com.pcl.lms.model.Student;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,12 +21,38 @@ public class RegistrationFormController {
     public RadioButton ratePaid;
     public ToggleGroup ratePayement;
     public RadioButton rbtnUnpaid;
-    public ComboBox cmbStudent;
+    public ComboBox<String> cmbStudent;
     public TextField txtSearch;
     public AnchorPane context;
+    String searchText = "";
+    public AnchorPane root;
 
     public void initialize(){
+
+        setStudentData(searchText);
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue!=null){
+                this.searchText = newValue;
+                setStudentData(searchText);
+                cmbStudent.show();
+            }
+        });
         setProgramData();
+    }
+
+    private void setStudentData(String searchText) {
+        ObservableList<String> studentObList = FXCollections.observableArrayList();
+        studentObList.clear();
+        if(!Database.studentTable.isEmpty()){
+            for (Student st:Database.studentTable){
+                if (st.getStudentName().toLowerCase().contains(searchText.toLowerCase())){
+                    studentObList.add(st.getStudentId()+"-"+st.getStudentName());
+                }
+
+            }
+            cmbStudent.setItems(studentObList);
+        }
+
     }
 
     private void setProgramData() {
