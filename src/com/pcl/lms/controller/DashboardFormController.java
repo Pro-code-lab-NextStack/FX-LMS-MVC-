@@ -66,7 +66,8 @@ public class DashboardFormController {
         setUi("ProgramManagementForm");
     }
 
-    public void navigateStudentRegOnAction(ActionEvent actionEvent) {
+    public void navigateStudentRegOnAction(ActionEvent actionEvent) throws IOException {
+    setUi("RegistrationForm");
     }
 
     public void navigateIntakeFormOnAction(ActionEvent actionEvent) throws IOException {
