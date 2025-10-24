@@ -28,7 +28,7 @@ public class RegistrationFormController {
     public AnchorPane root;
 
     public void initialize(){
-
+        setStudentId();
         setStudentData(searchText);
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue!=null){
@@ -37,7 +37,20 @@ public class RegistrationFormController {
                 cmbStudent.show();
             }
         });
+        cmbStudent.valueProperty().addListener((observable, oldValue, newValue) -> {
+            setStudentId();
+        });
         setProgramData();
+    }
+
+    private void setStudentId() {
+        if (cmbStudent.getValue()==null){
+            txtId.setText("Select student");
+        }else{
+           String studentComboValue=cmbStudent.getValue();
+            String[] splittedComboValue = studentComboValue.split("-");
+            txtId.setText(splittedComboValue[0]+"-"+splittedComboValue[1]);
+        }
     }
 
     private void setStudentData(String searchText) {
