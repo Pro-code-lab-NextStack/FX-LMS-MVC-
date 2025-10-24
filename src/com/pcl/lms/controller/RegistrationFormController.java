@@ -1,6 +1,7 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.model.Enroll;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
 import javafx.collections.FXCollections;
@@ -18,7 +19,7 @@ public class RegistrationFormController {
     public TextField txtId;
     public Button btnSave;
     public ComboBox<String> cmbProgram;
-    public RadioButton ratePaid;
+    public RadioButton rbtnPaid;
     public ToggleGroup ratePayement;
     public RadioButton rbtnUnpaid;
     public ComboBox<String> cmbStudent;
@@ -92,6 +93,15 @@ public class RegistrationFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
+
+        Database.enrollTable.add(new Enroll(
+                cmbStudent.getValue(),
+                cmbProgram.getValue(),
+                rbtnPaid.isSelected()
+                ));
+
+        new Alert(Alert.AlertType.INFORMATION, "Success").show();
+
 
     }
     private void setUi(String location) throws IOException {

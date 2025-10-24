@@ -13,6 +13,7 @@ public class Database {
     public static ArrayList <Teacher> teacherTable=new ArrayList<>();
     public static ArrayList<Programme> programmeTable=new ArrayList<>();
     public static ArrayList<Intake> intakeTable=new ArrayList<>();
+    public static ArrayList <Enroll> enrollTable=new ArrayList<>();
    static {
         userTable.add(new User(new PasswordManager().encode("1234"),27,"darkcreationsl98@gmail.com","gihan viraj"));
         teacherTable.add(new Teacher("Gihan","T-1","0705295574","Kandy"));

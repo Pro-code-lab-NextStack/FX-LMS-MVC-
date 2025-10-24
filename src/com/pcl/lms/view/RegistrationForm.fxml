@@ -41,7 +41,7 @@
             <Font name="System Bold" size="17.0" />
          </font>
       </Label>
-      <RadioButton fx:id="ratePaid" layoutX="386.0" layoutY="94.0" mnemonicParsing="false" text="Paid">
+      <RadioButton fx:id="rbtnPaid" layoutX="386.0" layoutY="94.0" mnemonicParsing="false" text="Paid">
          <toggleGroup>
             <ToggleGroup fx:id="ratePayement" />
          </toggleGroup>
