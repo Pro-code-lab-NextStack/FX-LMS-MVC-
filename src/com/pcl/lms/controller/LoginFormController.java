@@ -1,6 +1,7 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.env.StaticResource;
 import com.pcl.lms.model.User;
 import com.pcl.lms.utill.security.PasswordManager;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.util.Optional;
 
 public class LoginFormController {
@@ -40,19 +42,42 @@ public class LoginFormController {
     public void navigateDashboardOnAction(ActionEvent actionEvent) throws IOException {
         String email = txtEmail.getText();
         String password = txtPassword.getText();
-        Optional<User> selectUser = Database.userTable.stream().filter(e -> e.getEmail().equals(email)).findFirst();
-            if (selectUser.isPresent()) {
 
-                if ( new PasswordManager().check(password, selectUser.get().getPassword())) {
-                    new Alert(Alert.AlertType.INFORMATION,"Welcome....").show();
-                    setUi("DashboardForm");
-                }else {
-                    new Alert(Alert.AlertType.ERROR, "Incorrect password!!!").show();
-                }
+        try{
+            boolean login=loginWithMyql(email,password);
+            if(login){
+                setUi("DashboardForm");
+                new Alert(Alert.AlertType.INFORMATION,"Welcome"+email).show();
             }else {
-                new Alert(Alert.AlertType.ERROR,"User not found!!!").show();
+                new Alert(Alert.AlertType.INFORMATION,"some thing went wrong").show();
+
             }
 
+
+        }catch (ClassNotFoundException|SQLException e){
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+    private boolean loginWithMyql(String email, String password) throws ClassNotFoundException, SQLException {
+        Connection connection = DbConnection.getInstance().getConnection();
+
+        PreparedStatement ps = connection.prepareStatement("SELECT email,password FROM user WHERE email=?");
+        ps.setString(1,email);
+        ResultSet set = ps.executeQuery();
+        if (set.next()) {
+            if (new PasswordManager().check(password,set.getString("password"))) {
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
 
 
     }
