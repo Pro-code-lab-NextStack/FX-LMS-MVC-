@@ -15,6 +15,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
@@ -46,7 +47,12 @@ public class LoginFormController {
         try{
             boolean login=loginWithMyql(email,password);
             if(login){
-                setUi("DashboardForm");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/DashboardForm.fxml"));
+                Parent load = loader.load();
+                DashboardFormController dashboardController = loader.getController();
+                dashboardController.setData(email);
+                Stage stage = (Stage) context.getScene().getWindow();
+                stage.setScene(new Scene(load));
                 new Alert(Alert.AlertType.INFORMATION,"Welcome"+email).show();
             }else {
                 new Alert(Alert.AlertType.INFORMATION,"some thing went wrong").show();
