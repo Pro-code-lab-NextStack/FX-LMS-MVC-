@@ -206,27 +206,31 @@ public class TeacherManagementFormController {
             }
 
         }else{
-            Optional<Teacher> selectedTeacher = Database.teacherTable.stream().filter
-                    (e -> e.getId().equals(teacher.getId())).findFirst();
-            if(!selectedTeacher.isPresent()){
-                new Alert(Alert.AlertType.INFORMATION, "Teacher Not Found").show();
-                return;
+
+            boolean isUpdate=updateTeacher(teacher);
+            if (isUpdate) {
+                setTeacherData(searchText);
+                clearFields();
+                setTeacherId();
+                btnSave.setText("Save");
+                new Alert(Alert.AlertType.INFORMATION, "Teacher Updated").show();
             }
-            selectedTeacher.get().setName(teacher.getName());
-            selectedTeacher.get().setAddress(teacher.getAddress());
-            selectedTeacher.get().setAddress(teacher.getAddress());
-            setTeacherData(searchText);
-            setTeacherId();
-            clearFields();
-            setTeacherId();
-            btnSave.setText("Save");
-            new Alert(Alert.AlertType.INFORMATION, "Teacher Updated").show();
 
         }
         }catch (SQLException | ClassNotFoundException e){
 
         }
 
+    }
+
+    private boolean updateTeacher(Teacher teacher) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("UPDATE teacher SET name=?,contact=?,address=? WHERE id=?");
+        ps.setString(1,teacher.getName());
+        ps.setString(2,teacher.getContact());
+        ps.setString(3,teacher.getAddress());
+        ps.setString(4,teacher.getId());
+        return  ps.executeUpdate()>0;
     }
 
     private boolean saveTeacher(Teacher teacher) throws SQLException, ClassNotFoundException {
