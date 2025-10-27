@@ -1,6 +1,7 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.model.Teacher;
 import com.pcl.lms.view.tm.TeacherTm;
 import javafx.collections.FXCollections;
@@ -14,6 +15,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -99,17 +104,37 @@ public class TeacherManagementFormController {
     }
 
     private void setTeacherId() {
-        if (!Database.teacherTable.isEmpty()) {
-            Teacher lastTeacher = Database.teacherTable.get(Database.teacherTable.size() - 1);
-            String[] splittedTeacherId = lastTeacher.getId().split("-");
-            String lastCharacterAsString = splittedTeacherId[1];
-            int lastDigit = Integer.parseInt(lastCharacterAsString);
-            lastDigit++;
-            String genaratedId="T-"+lastDigit;
-            txtTeacherId.setText(genaratedId);
-        }else {
-            txtTeacherId.setText("T-1");
+
+        try {
+            String lastTeacher=getLastTeacherId();
+
+            if (lastTeacher!=null) {
+
+                String[] splittedTeacherId = lastTeacher.split("-");
+                String lastCharacterAsString = splittedTeacherId[1];
+                int lastDigit = Integer.parseInt(lastCharacterAsString);
+                lastDigit++;
+                String genaratedId="T-"+lastDigit;
+                txtTeacherId.setText(genaratedId);
+            }else {
+                txtTeacherId.setText("T-1");
+            }
+        }catch (SQLException | ClassNotFoundException e){
+            e.printStackTrace();
         }
+
+    }
+
+    private String getLastTeacherId() throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps =
+                connection.prepareStatement("SELECT id FROM teacher ORDER BY  CAST(SUBSTRING(id,3)AS UNSIGNED)DESC LIMIT 1");
+        ResultSet set = ps.executeQuery();
+        if (set.next()){
+            return set.getString(1);
+        }
+        return null;
+
     }
 
     public void newTeacherOnAction(ActionEvent actionEvent) {
@@ -128,19 +153,22 @@ public class TeacherManagementFormController {
                 txtContact.getText(),
                 txtAddress.getText()
         );
-        if (btnSave.getText().equals("Save")) {
+        try{if (btnSave.getText().equals("Save")) {
 
-           Database.teacherTable.add(teacher);
-           setTeacherId();
-           setTeacherData(searchText);
-           clearFields();
-            new Alert(Alert.AlertType.INFORMATION, "Teacher Saved").show();
+            boolean isSaved=saveTeacher(teacher);
+            if (isSaved) {
+                setTeacherId();
+                setTeacherData(searchText);
+                clearFields();
+                new Alert(Alert.AlertType.INFORMATION, "Teacher Saved").show();
+            }
+
         }else{
             Optional<Teacher> selectedTeacher = Database.teacherTable.stream().filter
                     (e -> e.getId().equals(teacher.getId())).findFirst();
             if(!selectedTeacher.isPresent()){
-               new Alert(Alert.AlertType.INFORMATION, "Teacher Not Found").show();
-               return;
+                new Alert(Alert.AlertType.INFORMATION, "Teacher Not Found").show();
+                return;
             }
             selectedTeacher.get().setName(teacher.getName());
             selectedTeacher.get().setAddress(teacher.getAddress());
@@ -153,6 +181,20 @@ public class TeacherManagementFormController {
             new Alert(Alert.AlertType.INFORMATION, "Teacher Updated").show();
 
         }
+        }catch (SQLException | ClassNotFoundException e){
+
+        }
+
+    }
+
+    private boolean saveTeacher(Teacher teacher) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO teacher VALUES (?,?,?,?)");
+        ps.setString(1,teacher.getId());
+        ps.setString(2,teacher.getName());
+        ps.setString(3,teacher.getContact());
+        ps.setString(4,teacher.getAddress());
+        return ps.executeUpdate()>0;
     }
 
     private void clearFields() {
