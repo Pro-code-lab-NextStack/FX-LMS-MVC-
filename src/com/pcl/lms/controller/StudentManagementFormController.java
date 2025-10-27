@@ -163,13 +163,10 @@ public class StudentManagementFormController {
 
 
             }else{
-                Optional<Student> selectedStudent =
-                        Database.studentTable.stream().filter(e -> e.getStudentId().equals(txtStudentId.getText()))
-                                .findFirst();
-                if (selectedStudent.isPresent()) {
-                    selectedStudent.get().setStudentName(txtStudentName.getText());
-                    selectedStudent.get().setStudentAddress(txtAddress.getText());
-                    selectedStudent.get().setDob(Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+
+                if (updateStudent(student,userEmail)) {
+
                     new Alert(Alert.AlertType.INFORMATION,"Student Updated").show();
                     setStudentId();
                     clearFields();
@@ -183,6 +180,17 @@ public class StudentManagementFormController {
         }
 
 
+    }
+
+    private boolean updateStudent(Student student, String userEmail) throws SQLException, ClassNotFoundException {
+        Connection connection=DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("UPDATE student SET name=?,address=?,dob=?,user_email=? WHERE id=?");
+        ps.setString(1,student.getStudentName());
+        ps.setString(2,student.getStudentAddress());
+        ps.setObject(3,student.getDob());
+        ps.setObject(4,userEmail);
+        ps.setString(5,student.getStudentId());
+        return ps.executeUpdate()>0;
     }
 
     private boolean saveStudent(Student student, String userEmail) throws SQLException, ClassNotFoundException {
