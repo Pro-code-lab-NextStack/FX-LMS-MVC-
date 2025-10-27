@@ -98,10 +98,13 @@ public class StudentManagementFormController {
                         alert.showAndWait();
 
                         if (alert.getResult()==ButtonType.YES){
-                            Database.studentTable.remove(st);
-                            new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
-                            setTableData(searchText);
-                            setStudentId();
+                         try{
+                             boolean isDelete=deleteStudent(st);
+                             new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
+                             setTableData(searchText);
+                             setStudentId();
+                         }catch (SQLException|ClassNotFoundException e){}
+
                         }
 
 
@@ -116,6 +119,13 @@ public class StudentManagementFormController {
         }
 
 
+    }
+
+    private boolean deleteStudent(Student st) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM student WHERE id=?");
+        ps.setString(1, st.getStudentId());
+       return ps.executeUpdate()>0;
     }
 
     private ArrayList<Student> fetchStudentData(String searchText) throws SQLException, ClassNotFoundException {
