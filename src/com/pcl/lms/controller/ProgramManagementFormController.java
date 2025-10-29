@@ -82,47 +82,36 @@ public class ProgramManagementFormController {
     }
 
     private void loadProgrammeData(String searchText) {
-        ObservableList <ProgrammeTm> programsObList=FXCollections.observableArrayList();
-        for (Programme temp:Database.programmeTable){
-            if (temp.getProgrammeName().contains(searchText)){
-                Button btnModule=new Button("Module");
-                Button btnDelete=new Button("Delete");
-                programsObList.add(
-                        new ProgrammeTm(
-                                temp.getProgrammeId(),
-                                temp.getProgrammeName(),
-                                temp.getTeacher(),
-                                btnModule,
-                                temp.getCost(),
-                                btnDelete
-                        )
-                );
-                btnDelete.setOnAction(event -> {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure",ButtonType.YES,ButtonType.NO);
-                    alert.showAndWait();
-                    if (alert.getResult()==ButtonType.YES){
-                        Database.programmeTable.remove(temp);
-                        loadProgrammeData(searchText);
-                        setProgrammeId();
-                        new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
-                    }
-                });
-                btnModule.setOnAction(event -> {
-                    try{
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/ModulePopUp.fxml"))));
-                        stage.show();
-                    }catch (IOException e){
-                        throw new RuntimeException(e);
-                    }
-
-                });
-            }
+    try {
+        ObservableList<ProgrammeTm> observableList= fetchProgramDetails(searchText);
 
 
+        tblProgramme.setItems(observableList);
+    }catch (SQLException|ClassNotFoundException e){
+        e.printStackTrace();
+    }
 
+    }
+
+    private ObservableList<ProgrammeTm> fetchProgramDetails(String searchText) throws SQLException, ClassNotFoundException {
+        ObservableList<ProgrammeTm> programObList=FXCollections.observableArrayList();
+        Connection connection = DbConnection.getInstance().getConnection();
+
+        PreparedStatement ps = connection.prepareStatement
+                ("SELECT p.id,p.name,p.cost,t.name,t.id FROM program p INNER JOIN teacher t ON t.id=p.id WHERE p.name LIKE ?");
+        ps.setString(1,"%"+searchText+"%");
+        ResultSet set = ps.executeQuery();
+
+        while (set.next()){
+            Button btnModule=new Button("Module");
+            Button btnDelete=new Button("Delete");
+            programObList.add(new ProgrammeTm
+                    (set.getString(1),
+                            set.getString(2),
+                            set.getString(5)+"-"+set.getString(4),
+                            btnModule,set.getDouble(3),btnDelete) );
         }
-        tblProgramme.setItems(programsObList);
+        return programObList;
     }
 
     private void setTeacher() {
