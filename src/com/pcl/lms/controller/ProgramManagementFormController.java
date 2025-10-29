@@ -18,10 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -199,34 +196,100 @@ public class ProgramManagementFormController {
            selectedModules[pointer] =mod.getName();
            pointer++;
         }
-        if (btnSave.getText().equals("Save")) {
-            Database.programmeTable.add(new Programme(
-                    txtProgramId.getText(),
-                    txtProgramName.getText(),
-                    Double.parseDouble(txtCost.getText()),
-                    cbxTeacher.getValue(),
-                    selectedModules
-            ));
-            setProgrammeId();
-            clearFields();
-            loadProgrammeData(searchText);
-            new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
-        }else {
-            Optional<Programme> selectedProgramme = Database.programmeTable.stream().filter
-                    (e -> e.getProgrammeId().equals(txtProgramId.getText())).findFirst();
+        try {
+            if (btnSave.getText().equals("Save")) {
+                boolean isSaved=saveProgram(new Programme(
+                        txtProgramId.getText(),
+                        txtProgramName.getText(),
+                        Double.parseDouble(txtCost.getText()),
+                        splitId(cbxTeacher.getValue()),
+                        selectedModules
+                ));
 
-            if (selectedProgramme.isPresent()) {
-                selectedProgramme.get().setProgrammeName(txtProgramName.getText());
-                selectedProgramme.get().setCost(Double.parseDouble(txtCost.getText()));
-                selectedProgramme.get().setTeacher(cbxTeacher.getValue());
-                selectedProgramme.get().setModule(selectedModules);
-                new Alert(Alert.AlertType.INFORMATION, "Programme Updated"+txtProgramId.getText()).show();
-                loadProgrammeData(searchText);
+                setProgrammeId();
                 clearFields();
-                btnSave.setText("Save");
+                loadProgrammeData(searchText);
+                new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
+            }else {
+                Optional<Programme> selectedProgramme = Database.programmeTable.stream().filter
+                        (e -> e.getProgrammeId().equals(txtProgramId.getText())).findFirst();
+
+                if (selectedProgramme.isPresent()) {
+                    selectedProgramme.get().setProgrammeName(txtProgramName.getText());
+                    selectedProgramme.get().setCost(Double.parseDouble(txtCost.getText()));
+                    selectedProgramme.get().setTeacher(cbxTeacher.getValue());
+                    selectedProgramme.get().setModule(selectedModules);
+                    new Alert(Alert.AlertType.INFORMATION, "Programme Updated"+txtProgramId.getText()).show();
+                    loadProgrammeData(searchText);
+                    clearFields();
+                    btnSave.setText("Save");
+                }
             }
+        }catch (ClassNotFoundException | SQLException e){
+            e.printStackTrace();
         }
 
+
+    }
+
+    private String splitId(String value) {
+        String[] splittedArr = value.split("-");
+        return splittedArr[0]+"-"+splittedArr[1];
+    }
+
+    private boolean saveProgram(Programme programme) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
+     try{
+         PreparedStatement  ps=connection.prepareStatement("INSERT INTO program(id,name,cost,teacher_id)VALUES (?,?,?,?)");
+         ps.setString(1,programme.getProgrammeId());
+         ps.setString(2,programme.getProgrammeName());
+         ps.setDouble(3,programme.getCost());
+         ps.setString(4,programme.getTeacher());
+
+         if (ps.executeUpdate()==0){
+             connection.rollback();
+             return false;
+         }
+         for (String module:programme.getModule()){
+             try(PreparedStatement ps2= connection.prepareStatement
+                     ("INSERT INTO module (name)  VALUES (?),Statement.RETURN_GENERATED_KEYS")){
+                 ps2.setString(1,module);
+                 if (ps2.executeUpdate()==0){
+                     connection.rollback();
+                     return false;
+                 }
+                 try(ResultSet set= ps2.getGeneratedKeys()){
+                     if (set.next()){
+                         int moduleId=set.getInt(1);
+                         try(PreparedStatement ps3=connection.prepareStatement
+                                 ("INSERT INTO module_has_program VALUES (?,?)")){
+                             ps3.setInt(1,moduleId);
+                             ps3.setString(2,programme.getProgrammeId());
+                             if (ps3.executeUpdate()==0){
+                                 connection.rollback();
+                                 return false;
+                             }
+                         }
+                     }else {
+                         connection.rollback();
+                         return false;
+                     }
+
+                 }
+
+
+             }
+
+         }
+         connection.commit();
+         return true;
+     }catch (Exception e){
+         connection.rollback();
+         throw e;
+     }finally {
+         connection.setAutoCommit(true);
+     }
     }
 
     private void clearFields() {
