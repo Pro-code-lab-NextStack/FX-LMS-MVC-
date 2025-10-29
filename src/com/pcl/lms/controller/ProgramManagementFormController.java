@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -98,11 +99,12 @@ public class ProgramManagementFormController {
         Connection connection = DbConnection.getInstance().getConnection();
 
         PreparedStatement ps = connection.prepareStatement
-                ("SELECT p.id,p.name,p.cost,t.name,t.id FROM program p INNER JOIN teacher t ON t.id=p.id WHERE p.name LIKE ?");
+                ("SELECT p.id,p.name,p.cost,t.name,t.id FROM program p INNER JOIN teacher t ON t.id=p.teacher_id WHERE p.name LIKE ?");
         ps.setString(1,"%"+searchText+"%");
         ResultSet set = ps.executeQuery();
-
+        String programmeId="";
         while (set.next()){
+            programmeId=set.getString(1);
             Button btnModule=new Button("Module");
             Button btnDelete=new Button("Delete");
             programObList.add(new ProgrammeTm
@@ -110,6 +112,24 @@ public class ProgramManagementFormController {
                             set.getString(2),
                             set.getString(5)+"-"+set.getString(4),
                             btnModule,set.getDouble(3),btnDelete) );
+
+            String finalProgrammeId = programmeId;
+            btnModule.setOnAction((event)->{
+
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/ModulePopUP.FXML"));
+                    Parent load = loader.load();
+                    ModulePopUpController controller = loader.getController();
+                    controller.setData(finalProgrammeId);
+                    Stage stage = new Stage();
+                    stage.setScene(new Scene(load));
+                    stage.setTitle("Module List");
+                    stage.show();
+
+                } catch (IOException  e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
         return programObList;
     }
@@ -122,7 +142,7 @@ public class ProgramManagementFormController {
                list.add(t);
             }
             cbxTeacher.setItems(list);
-        }catch (SQLException | ClassNotFoundException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
 
