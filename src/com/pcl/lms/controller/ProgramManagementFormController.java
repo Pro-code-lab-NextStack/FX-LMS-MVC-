@@ -240,57 +240,71 @@ public class ProgramManagementFormController {
     private boolean saveProgram(Programme programme) throws SQLException, ClassNotFoundException {
         Connection connection = DbConnection.getInstance().getConnection();
         connection.setAutoCommit(false);
-     try{
-         PreparedStatement  ps=connection.prepareStatement("INSERT INTO program(id,name,cost,teacher_id)VALUES (?,?,?,?)");
-         ps.setString(1,programme.getProgrammeId());
-         ps.setString(2,programme.getProgrammeName());
-         ps.setDouble(3,programme.getCost());
-         ps.setString(4,programme.getTeacher());
 
-         if (ps.executeUpdate()==0){
-             connection.rollback();
-             return false;
-         }
-         for (String module:programme.getModule()){
-             try(PreparedStatement ps2= connection.prepareStatement
-                     ("INSERT INTO module (name)  VALUES (?),Statement.RETURN_GENERATED_KEYS")){
-                 ps2.setString(1,module);
-                 if (ps2.executeUpdate()==0){
-                     connection.rollback();
-                     return false;
-                 }
-                 try(ResultSet set= ps2.getGeneratedKeys()){
-                     if (set.next()){
-                         int moduleId=set.getInt(1);
-                         try(PreparedStatement ps3=connection.prepareStatement
-                                 ("INSERT INTO module_has_program VALUES (?,?)")){
-                             ps3.setInt(1,moduleId);
-                             ps3.setString(2,programme.getProgrammeId());
-                             if (ps3.executeUpdate()==0){
-                                 connection.rollback();
-                                 return false;
-                             }
-                         }
-                     }else {
-                         connection.rollback();
-                         return false;
-                     }
+        try (
+                PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO program (id, name, cost, teacher_id) VALUES (?, ?, ?, ?)"
+                )
+        ) {
+            ps.setString(1, programme.getProgrammeId());
+            ps.setString(2, programme.getProgrammeName());
+            ps.setDouble(3, programme.getCost());
+            ps.setString(4, programme.getTeacher());
 
-                 }
+            if (ps.executeUpdate() == 0) {
+                connection.rollback();
+                return false;
+            }
 
+            for (String module : programme.getModule()) {
+                try (
+                        PreparedStatement ps2 = connection.prepareStatement(
+                                "INSERT INTO module (name) VALUES (?)",
+                                Statement.RETURN_GENERATED_KEYS
+                        )
+                ) {
+                    ps2.setString(1, module);
 
-             }
+                    if (ps2.executeUpdate() == 0) {
+                        connection.rollback();
+                        return false;
+                    }
 
-         }
-         connection.commit();
-         return true;
-     }catch (Exception e){
-         connection.rollback();
-         throw e;
-     }finally {
-         connection.setAutoCommit(true);
-     }
+                    try (ResultSet set = ps2.getGeneratedKeys()) {
+                        if (set.next()) {
+                            int moduleId = set.getInt(1);
+                            try (
+                                    PreparedStatement ps3 = connection.prepareStatement(
+                                            "INSERT INTO module_has_program (module_id, program_id) VALUES (?, ?)"
+                                    )
+                            ) {
+                                ps3.setInt(1, moduleId);
+                                ps3.setString(2, programme.getProgrammeId());
+
+                                if (ps3.executeUpdate() == 0) {
+                                    connection.rollback();
+                                    return false;
+                                }
+                            }
+                        } else {
+                            connection.rollback();
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            connection.commit();
+            return true;
+
+        } catch (Exception e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
+        }
     }
+
 
     private void clearFields() {
         txtCost.clear();
