@@ -129,12 +129,29 @@ public class ProgramManagementFormController {
     }
 
     private void setTeacher() {
-        ObservableList<String> list = FXCollections.observableArrayList();
-        for (Teacher t:Database.teacherTable){
-            list.add(t.getId().trim()+"-"+t.getName().trim());
+        try{
+            ArrayList<String> teacherArr=fetchTeachers();
+            ObservableList<String> list = FXCollections.observableArrayList();
+            for (String t:teacherArr){
+               list.add(t);
+            }
+            cbxTeacher.setItems(list);
+        }catch (SQLException | ClassNotFoundException e){
+            e.printStackTrace();
         }
-        cbxTeacher.setItems(list);
 
+
+    }
+
+    private ArrayList<String> fetchTeachers() throws SQLException, ClassNotFoundException {
+        ArrayList<String> teachers=new ArrayList<>();
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM teacher");
+        ResultSet set = ps.executeQuery();
+        while (set.next()){
+            teachers.add(set.getString("id")+"-"+set.getString("name"));
+        }
+        return teachers;
     }
 
     private void setProgrammeId() {
