@@ -99,12 +99,25 @@ public class IntakeManagementFormController {
     }
 
     private void setProgrammeData() {
-        ObservableList<String> programsObList = FXCollections.observableArrayList();
-        for (Programme temp:Database.programmeTable){
-            programsObList.add(temp.getProgrammeId()+"-"+temp.getProgrammeName());
+        try {
+            ObservableList<String> programsObList =fetchPrograms();
+            cmbProgram.setItems(programsObList);
+        }catch (SQLException|ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        cmbProgram.setItems(programsObList);
 
+
+    }
+
+    private ObservableList<String> fetchPrograms() throws SQLException, ClassNotFoundException {
+        ObservableList<String> programsObList = FXCollections.observableArrayList();
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM program");
+        ResultSet set = ps.executeQuery();
+        while(set.next()){
+           programsObList.add(set.getString(1)+"-"+set.getString(2));
+        }
+        return programsObList;
     }
 
     private void setIntakeId() {
