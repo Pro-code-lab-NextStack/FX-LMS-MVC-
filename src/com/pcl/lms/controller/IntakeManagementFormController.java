@@ -72,30 +72,57 @@ public class IntakeManagementFormController {
     }
 
     private void loadTableData(String searchText) {
-        ObservableList<IntakeTm> intakeObList = FXCollections.observableArrayList();
-        intakeObList.clear();
-        for (Intake intake:Database.intakeTable){
-            if (intake.getName().contains(searchText)){
-                Button btn=new Button("Delete");
-                intakeObList.add(new IntakeTm(
-                        intake.getId(),
-                        intake.getDate(),
-                        intake.getName(),
-                        intake.getProgramme(),
-                        btn
-                ));
-                btn.setOnAction((event) -> {
-                  Alert delAlert=  new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES,ButtonType.NO);
-                  delAlert.showAndWait();
-                  if (delAlert.getResult()==ButtonType.YES){
-                      Database.intakeTable.remove(intake);
-                      loadTableData(searchText);
-                      setIntakeId();
-                  }
-                });
+        try {
+            ObservableList<Intake> intakeFromMysql= fetchIntakeData(searchText);
+
+            ObservableList<IntakeTm> intakeObList = FXCollections.observableArrayList();
+            intakeObList.clear();
+            for (Intake intake:intakeFromMysql){
+
+                    Button btn=new Button("Delete");
+                    intakeObList.add(new IntakeTm(
+                            intake.getId(),
+                            intake.getDate(),
+                            intake.getName(),
+                            intake.getProgramme(),
+                            btn
+                    ));
+                    btn.setOnAction((event) -> {
+                        Alert delAlert=  new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES,ButtonType.NO);
+                        delAlert.showAndWait();
+                        if (delAlert.getResult()==ButtonType.YES){
+                            Database.intakeTable.remove(intake);
+                            loadTableData(searchText);
+                            setIntakeId();
+                        }
+                    });
+
             }
+            tblIntake.setItems(intakeObList);
+        }catch(SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
-        tblIntake.setItems(intakeObList);
+
+    }
+
+    private ObservableList<Intake> fetchIntakeData(String searchText) throws SQLException, ClassNotFoundException {
+        ObservableList <Intake> intakeObList = FXCollections.observableArrayList();
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement
+                ("SELECT i.id,i.name,i.date,p.id,p.name FROM intake i JOIN program p ON p.id=i.program_id WHERE i.name LIKE?");
+        ps.setString(1,"%"+searchText+"%");
+        ResultSet set = ps.executeQuery();
+        while (set.next()) {
+            intakeObList.add(new Intake(
+                    set.getString(1),
+                    set.getDate(3),
+                    set.getString(2),
+                    set.getString(4)+"-"+set.getString(5)
+            ));
+        }
+        return intakeObList;
+
+
     }
 
     private void setProgrammeData() {
