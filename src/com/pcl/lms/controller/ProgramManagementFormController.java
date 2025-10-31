@@ -46,6 +46,7 @@ public class ProgramManagementFormController {
      ArrayList <Modules> modList=new ArrayList<>();
    static ObservableList<ModulesTm> list = FXCollections.observableArrayList();
    private String searchText="";
+    public static String programIdForModules;
 
     public void initialize() {
         colModuleId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -113,14 +114,15 @@ public class ProgramManagementFormController {
                             set.getString(5)+"-"+set.getString(4),
                             btnModule,set.getDouble(3),btnDelete) );
 
-            String finalProgrammeId = programmeId;
+            programIdForModules = programmeId;
             btnModule.setOnAction((event)->{
 
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/ModulePopUP.FXML"));
                     Parent load = loader.load();
                     ModulePopUpController controller = loader.getController();
-                    controller.setData(finalProgrammeId);
+
+
                     Stage stage = new Stage();
                     stage.setScene(new Scene(load));
                     stage.setTitle("Module List");

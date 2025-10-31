@@ -17,16 +17,14 @@ public class ModulePopUpController {
     public AnchorPane context;
     public ListView<String> lstModule;
     ObservableList<String> moduleOblist= FXCollections.observableArrayList();
-    private String programId;
+    String programmeId;
 
     public void initialize(){
-        setModuleList(programId);
+        this.programmeId=ProgramManagementFormController.programIdForModules;
+        setModuleList(programmeId);
 
     }
-    public void setData(String programmeId){
-        this.programId = programmeId;
-        System.out.println(this.programId);
-    }
+
     private void setModuleList(String programId) {
         try{
             ObservableList <String> moduleOblist=fetchModules(programId);
@@ -41,7 +39,9 @@ public class ModulePopUpController {
     private ObservableList<String> fetchModules(String programId) throws SQLException, ClassNotFoundException {
         ObservableList<String> moduleOblist=FXCollections.observableArrayList();
         Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM module_has_program WHERE program_id=? ");
+        PreparedStatement ps = connection.prepareStatement
+                ("SELECT m.name FROM  module_has_program mhp JOIN module m ON mhp.module_id=m.id WHERE mhp.program_id=?");
+        System.out.println(programId);
         ps.setString(1, programId);
         ResultSet set = ps.executeQuery();
 
