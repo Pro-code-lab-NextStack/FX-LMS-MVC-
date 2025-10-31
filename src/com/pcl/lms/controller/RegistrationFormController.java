@@ -1,6 +1,7 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.model.Enroll;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
@@ -14,6 +15,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RegistrationFormController {
     public TextField txtId;
@@ -55,17 +60,29 @@ public class RegistrationFormController {
     }
 
     private void setStudentData(String searchText) {
-        ObservableList<String> studentObList = FXCollections.observableArrayList();
-        studentObList.clear();
-        if(!Database.studentTable.isEmpty()){
-            for (Student st:Database.studentTable){
-                if (st.getStudentName().toLowerCase().contains(searchText.toLowerCase())){
-                    studentObList.add(st.getStudentId()+"-"+st.getStudentName());
-                }
+        try {
+            ObservableList<String> studentObList = fetchStudents(searchText);
 
-            }
-            cmbStudent.setItems(studentObList);
+                cmbStudent.setItems(studentObList);
+
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
+
+
+    }
+
+    private ObservableList<String> fetchStudents(String searchText) throws SQLException, ClassNotFoundException {
+        ObservableList<String> studentObList=FXCollections.observableArrayList();
+        studentObList.clear();
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM student WHERE name LIKE?");
+        ps.setString(1, "%"+searchText+"%");
+        ResultSet set = ps.executeQuery();
+        while (set.next()){
+            studentObList.add(set.getString(1)+"-"+set.getString(2));
+        }
+        return studentObList;
 
     }
 
