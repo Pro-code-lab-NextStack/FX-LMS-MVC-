@@ -222,15 +222,17 @@ public class ProgramManagementFormController {
                 loadProgrammeData(searchText);
                 new Alert(Alert.AlertType.INFORMATION, "Programme Saved").show();
             }else {
-                Optional<Programme> selectedProgramme = Database.programmeTable.stream().filter
-                        (e -> e.getProgrammeId().equals(txtProgramId.getText())).findFirst();
+               boolean isUpdated= updateProgramme(
+                        new Programme( txtProgramId.getText(),
+                        txtProgramName.getText(),
+                        Double.parseDouble(txtCost.getText()),
+                        splitId(cbxTeacher.getValue()),
+                        selectedModules));
 
-                if (selectedProgramme.isPresent()) {
-                    selectedProgramme.get().setProgrammeName(txtProgramName.getText());
-                    selectedProgramme.get().setCost(Double.parseDouble(txtCost.getText()));
-                    selectedProgramme.get().setTeacher(cbxTeacher.getValue());
-                    selectedProgramme.get().setModule(selectedModules);
-                    new Alert(Alert.AlertType.INFORMATION, "Programme Updated"+txtProgramId.getText()).show();
+
+                if (isUpdated) {
+
+                    new Alert(Alert.AlertType.INFORMATION, "Programme Updated : "+txtProgramId.getText()).show();
                     loadProgrammeData(searchText);
                     clearFields();
                     btnSave.setText("Save");
@@ -241,6 +243,16 @@ public class ProgramManagementFormController {
         }
 
 
+    }
+
+    private boolean updateProgramme(Programme programme) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("UPDATE program SET name=?,cost=?,teacher_id=? WHERE id=?");
+        ps.setString(1,programme.getProgrammeName());
+        ps.setDouble(2,programme.getCost());
+        ps.setString(3,splitId(programme.getTeacher()));
+        ps.setString(4,programme.getProgrammeId());
+        return  ps.executeUpdate()>0;
     }
 
     private String splitId(String value) {
