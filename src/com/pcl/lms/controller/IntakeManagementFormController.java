@@ -1,6 +1,7 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.model.Intake;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.view.tm.IntakeTm;
@@ -15,6 +16,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
@@ -103,15 +108,34 @@ public class IntakeManagementFormController {
     }
 
     private void setIntakeId() {
-        if (!Database.intakeTable.isEmpty()){
-            Intake lastIntake = Database.intakeTable.get(Database.intakeTable.size() - 1);
-            String id = lastIntake.getId();
-            String[] split = id.split("-");
-            int lastDigit = Integer.parseInt(split[1]);
-            lastDigit++;
-            txtId.setText("I-"+lastDigit);
+        try {
+            String lastIntakeId =fetchLastIntakeId();
+
+            if (lastIntakeId!=null){
+
+                String[] split = lastIntakeId.split("-");
+                int lastDigit = Integer.parseInt(split[1]);
+                lastDigit++;
+                txtId.setText("I-"+lastDigit);
+                return;
+            }
+            txtId.setText("I-1");
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
-        txtId.setText("I-1");
+
+    }
+
+    private String fetchLastIntakeId() throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps =
+                connection.prepareStatement
+                        ("SELECT id FROM intake ORDER BY CAST(SUBSTRING(id,3)AS UNSIGNED)DESC LIMIT 1");
+        ResultSet set = ps.executeQuery();
+        if (set.next()) {
+            return set.getString(1);
+        }
+        return null;
     }
 
     public void newIntakeOnAction(ActionEvent actionEvent) {
