@@ -103,20 +103,43 @@ public class ProgramManagementFormController {
                 ("SELECT p.id,p.name,p.cost,t.name,t.id FROM program p INNER JOIN teacher t ON t.id=p.teacher_id WHERE p.name LIKE ?");
         ps.setString(1,"%"+searchText+"%");
         ResultSet set = ps.executeQuery();
-        String programmeId="";
+        String  programmeId;
         while (set.next()){
             programmeId=set.getString(1);
             Button btnModule=new Button("Module");
             Button btnDelete=new Button("Delete");
-            programObList.add(new ProgrammeTm
+            ProgrammeTm tm=new ProgrammeTm
                     (set.getString(1),
                             set.getString(2),
                             set.getString(5)+"-"+set.getString(4),
-                            btnModule,set.getDouble(3),btnDelete) );
+                            btnModule,set.getDouble(3),btnDelete);
+            programObList.add(tm);
 
+
+
+
+            btnDelete.setOnAction(actionEvent -> {
+                Alert alert = 
+                        new Alert(Alert.AlertType.CONFIRMATION, 
+                                "Do you want to delete this program ? ", ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+                if (alert.getResult()==ButtonType.YES){
+                    try {
+                      boolean isDeleted=  deleteProgram(tm);
+                      if (isDeleted){
+                          loadProgrammeData(searchText);
+                          setProgrammeId();
+                          new Alert(Alert.AlertType.INFORMATION,"Program Deleted").show();
+                      }
+                    } catch (SQLException|ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
+            });
             programIdForModules = programmeId;
             btnModule.setOnAction((event)->{
-
+        
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/ModulePopUP.FXML"));
                     Parent load = loader.load();
@@ -134,6 +157,41 @@ public class ProgramManagementFormController {
             });
         }
         return programObList;
+    }
+
+    private boolean deleteProgram(ProgrammeTm tm) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
+        try {
+            try(PreparedStatement ps1=connection.prepareStatement
+                    ("DELETE FROM module_has_program WHERE program_id=?")){
+                ps1.setString(1, tm.getProgrammeId());
+                ps1.executeUpdate();
+            }
+            boolean programDeleted;
+            try (PreparedStatement ps2=connection.prepareStatement("DELETE FROM program WHERE id=?")){
+                ps2.setString(1, tm.getProgrammeId());
+                programDeleted=ps2.executeUpdate()>0;
+            }
+            try(PreparedStatement ps3=connection.prepareStatement
+                    ("DELETE FROM module WHERE id NOT IN (SELECT DISTINCT module_id FROM module_has_program)")){
+                ps3.executeUpdate();
+            }
+            if(programDeleted){
+                connection.commit();
+                return true;
+            }else {
+                connection.rollback();
+                return false;
+            }
+
+        }catch (Exception e){
+            connection.rollback();
+            e.printStackTrace();
+            return false;
+        }finally {
+            connection.setAutoCommit(true);
+        }
     }
 
     private void setTeacher() {
