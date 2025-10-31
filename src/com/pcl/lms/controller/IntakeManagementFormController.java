@@ -159,34 +159,57 @@ public class IntakeManagementFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
-        if (btnSave.getText().equals("Save")) {
-            Database.intakeTable.add(new Intake(
-                   txtId.getText() ,
-                   Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()) ,
-                    txtName.getText() ,
-                    cmbProgram.getValue()
-            ));
-            new Alert(Alert.AlertType.INFORMATION, "Saved").show();
-            setIntakeId();
-            setProgrammeData();
-            clearField();
-            loadTableData(searchText);
+        Intake intake=new Intake(
+                txtId.getText() ,
+                Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()) ,
+                txtName.getText() ,
+                cmbProgram.getValue()
+        );
+        try{
+            if (btnSave.getText().equals("Save")) {
+                boolean isSaved=saveIntake(intake);
 
-        }else{
-            Optional<Intake> selectedIntake = Database.intakeTable.stream().filter(e -> e.getId().equals(txtId.getText())).findFirst();
-            if (selectedIntake.isPresent()) {
-                selectedIntake.get().setName(txtName.getText());
-                selectedIntake.get().setDate(Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                selectedIntake.get().setProgramme(cmbProgram.getValue());
-                new Alert(Alert.AlertType.INFORMATION, "Update"+selectedIntake.get().getId()).show();
+                new Alert(Alert.AlertType.INFORMATION, "Saved").show();
+                setIntakeId();
+                setProgrammeData();
                 clearField();
                 loadTableData(searchText);
-                setIntakeId();
-                btnSave.setText("Save");
+
+            }else{
+                Optional<Intake> selectedIntake = Database.intakeTable.stream().filter(e -> e.getId().equals(txtId.getText())).findFirst();
+                if (selectedIntake.isPresent()) {
+                    selectedIntake.get().setName(txtName.getText());
+                    selectedIntake.get().setDate(Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                    selectedIntake.get().setProgramme(cmbProgram.getValue());
+                    new Alert(Alert.AlertType.INFORMATION, "Update"+selectedIntake.get().getId()).show();
+                    clearField();
+                    loadTableData(searchText);
+                    setIntakeId();
+                    btnSave.setText("Save");
+                }
             }
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
+
         
         
+    }
+
+    private boolean saveIntake(Intake intake) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO intake VALUES(?,?,?,?)");
+        ps.setString(1,intake.getId());
+        ps.setString(2,intake.getName());
+        ps.setObject(3,intake.getDate());
+        ps.setString(4,splitId(intake.getProgramme()));
+        return ps.executeUpdate()>0;
+
+    }
+
+    private String splitId(String value) {
+        String[] split = value.split("-");
+        return  split[0].trim()+"-"+split[1].trim();
     }
 
     private void clearField() {
