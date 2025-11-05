@@ -2,8 +2,12 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.impl.UserBoImpl;
+import com.pcl.lms.dto.response.ResponseUserDto;
 import com.pcl.lms.env.StaticResource;
 import com.pcl.lms.model.User;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -28,7 +32,7 @@ public class LoginFormController {
     public Label lblVersion;
     public TextField txtEmail;
     public PasswordField txtPassword;
-
+    UserBoImpl userBo= BoFactory.getInstance().getBo(BoType.USER);
     public void initialize() {
         setStaticData();
     }
@@ -45,18 +49,17 @@ public class LoginFormController {
         String password = txtPassword.getText();
 
         try{
-            boolean login=loginWithMyql(email,password);
-            if(login){
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/DashboardForm.fxml"));
-                Parent load = loader.load();
-                DashboardFormController dashboardController = loader.getController();
-                dashboardController.setData(email);
-                Stage stage = (Stage) context.getScene().getWindow();
-                stage.setScene(new Scene(load));
-                new Alert(Alert.AlertType.INFORMATION,"Welcome"+email).show();
-            }else {
-                new Alert(Alert.AlertType.INFORMATION,"some thing went wrong").show();
+            ResponseUserDto loginState = userBo.login(email, password);
+            if (loginState != null) {
+                if (loginState.getStatusCode()==200){
+                    new Alert(Alert.AlertType.INFORMATION, "Login Successful!").show();
+                    setUi("DashboardForm");
+                }else{
+                    new Alert(Alert.AlertType.ERROR, loginState.getMessage()).show();
+                }
 
+            }else {
+                new Alert(Alert.AlertType.INFORMATION, "User Not Found").show();
             }
 
 

@@ -2,8 +2,13 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.UserBo;
+import com.pcl.lms.bo.custom.impl.UserBoImpl;
+import com.pcl.lms.dto.request.RequestUserDto;
 import com.pcl.lms.env.StaticResource;
 import com.pcl.lms.model.User;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +34,7 @@ public class SignupFormController {
     public TextField txtEmail;
     public Label lblCompany;
     public Label lblVersion;
-
+    UserBo user= BoFactory.getInstance().getBo(BoType.USER);
     public  void initialize(){
         setStaticData();
     }
@@ -47,40 +52,27 @@ public class SignupFormController {
         String email = txtEmail.getText();
         String fullName = txtFullName.getText();
         int age=Integer.parseInt(txtAge.getText());
-        String password=new PasswordManager().encode(txtPassword.getText());
+        String password=txtPassword.getText();
 
-
-        User user=new User(password,age,email,fullName);
-        try{
-            signup(user);
-            System.out.println(user.toString());
-
-            new Alert(Alert.AlertType.INFORMATION,"Account Created").show();
-            setUi("LoginForm");
-        }catch (ClassNotFoundException | SQLException e){
-            e.printStackTrace();
+        try {
+            boolean isSaved = user.registerUser(new RequestUserDto(
+                    email,
+                    fullName,
+                    age,
+                    password
+            ));
+            if(isSaved){
+                new Alert(Alert.AlertType.INFORMATION,"Account Created").show();
+                setUi("LoginForm");
+            }else {
+                new Alert(Alert.AlertType.ERROR," Registration Failed").show();
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
-
     }
-    private boolean signup(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
 
-        String sql="INSERT INTO user VALUES(?,?,?,?)";
-
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, user.getEmail());
-        ps.setString(2,user.getFullName());
-        ps.setInt(3,user.getAge());
-        ps.setString(4,user.getPassword());
-/*
-        int rowCount = ps.executeUpdate();
-        if (rowCount > 0) {
-            return true;
-        }return false;*/
-        return ps.executeUpdate()>0;
-
-    }
     private void setUi(String location) throws IOException {
         Stage stage =(Stage) context.getScene().getWindow();
         stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));
