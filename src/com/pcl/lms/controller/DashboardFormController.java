@@ -80,8 +80,5 @@ public class DashboardFormController {
     public void navigateIntakeFormOnAction(ActionEvent actionEvent) throws IOException {
         setUi("IntakeManagementForm");
     }
-    public void setData(String userEmail){
-        this.userEmail=userEmail;
 
-    }
 }

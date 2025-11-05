@@ -2,7 +2,12 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.impl.StudentBoImpl;
+import com.pcl.lms.dto.request.RequestStudentDto;
+import com.pcl.lms.env.Session;
 import com.pcl.lms.model.Student;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.view.tm.StudentTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,7 +47,7 @@ public class StudentManagementFormController {
     public TableColumn<StudentTm,Button> colOption;
     String searchText="";
     String userEmail;
-
+    StudentBoImpl studentBo= BoFactory.getInstance().getBo(BoType.STUDENT);
     public void initialize(){
         colID.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -51,6 +56,7 @@ public class StudentManagementFormController {
         colOption.setCellValueFactory(new PropertyValueFactory<>("btn"));
         setStudentId();
         setTableData(searchText);
+        System.out.println(Session.getEmail());
 
         tblStudent.getSelectionModel().selectedItemProperty().addListener
                 ((observable, oldValue, newValue) -> {
@@ -144,16 +150,19 @@ public class StudentManagementFormController {
 
 
     public void saveOnAction(ActionEvent actionEvent) {
-        Student student = new Student(
-                txtStudentId.getText(),
-                txtStudentName.getText(),
-                txtAddress.getText(),
-                Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
-        );
+
         try {
             if (btnSave.getText().equals("Save")) {
 
-                boolean isSaved = saveStudent(student, userEmail);
+                boolean isSaved = studentBo.saveStudent(new RequestStudentDto(
+                        txtStudentId.getText(),
+                        txtStudentName.getText(),
+                        txtAddress.getText(),
+                        Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+                ));
+
+
                 if (isSaved) {
                     setStudentId();
                     clearFields();
@@ -165,14 +174,14 @@ public class StudentManagementFormController {
             }else{
 
 
-                if (updateStudent(student,userEmail)) {
+               /* if (updateStudent(student,userEmail)) {
 
                     new Alert(Alert.AlertType.INFORMATION,"Student Updated").show();
                     setStudentId();
                     clearFields();
                     setTableData(searchText);
                     btnSave.setText("Save");
-                }
+                }*/
 
             }
         }catch (SQLException|ClassNotFoundException e){
