@@ -72,24 +72,7 @@ public class LoginFormController {
 
     }
 
-    private boolean loginWithMyql(String email, String password) throws ClassNotFoundException, SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
 
-        PreparedStatement ps = connection.prepareStatement("SELECT email,password FROM user WHERE email=?");
-        ps.setString(1,email);
-        ResultSet set = ps.executeQuery();
-        if (set.next()) {
-            if (new PasswordManager().check(password,set.getString("password"))) {
-                return true;
-            }else {
-                return false;
-            }
-        }else {
-            return false;
-        }
-
-
-    }
 
     public void navigateForgotPasswordOnAction(ActionEvent actionEvent) throws IOException {
         setUi("EmailVerificationForm");

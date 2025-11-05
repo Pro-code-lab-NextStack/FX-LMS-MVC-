@@ -1,6 +1,7 @@
 package com.pcl.lms.dao.cutom.impl;
 
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.cutom.UserDao;
 import com.pcl.lms.entity.User;
 
@@ -13,10 +14,7 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
     @Override
     public User findByEmail(String email) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM user WHERE email=?");
-        ps.setString(1,email);
-        ResultSet set = ps.executeQuery();
+        ResultSet set = CrudUtill.execute("SELECT * FROM user WHERE email=?", email);
         if(set.next()){
             return new User(
                     set.getString("email"),
@@ -30,13 +28,10 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean save(User user) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO user VALUES(?,?,?,?)");
-        ps.setString(1, user.getEmail());
-        ps.setString(2,user.getFullName());
-        ps.setInt(3,user.getAge());
-        ps.setString(4,user.getPassword());
-        return ps.executeUpdate()>0;
+        return CrudUtill.execute
+                ("INSERT INTO user VALUES(?,?,?,?)",
+                        user.getEmail(), user.getFullName(), user.getAge(), user.getPassword());
+
     }
 
     @Override
