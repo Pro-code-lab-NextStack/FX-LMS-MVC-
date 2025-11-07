@@ -5,6 +5,7 @@ import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.BoFactory;
 import com.pcl.lms.bo.custom.impl.StudentBoImpl;
 import com.pcl.lms.dto.request.RequestStudentDto;
+import com.pcl.lms.dto.response.ResponseStudentDto;
 import com.pcl.lms.env.Session;
 import com.pcl.lms.model.Student;
 import com.pcl.lms.utill.BoType;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class StudentManagementFormController {
@@ -84,44 +86,22 @@ public class StudentManagementFormController {
 
     private void setTableData(String newValue) {
         try {
-            ArrayList<Student> studentList= fetchStudentData(searchText);
-            ObservableList<StudentTm> studentTm= FXCollections.observableArrayList();
+                List<ResponseStudentDto> students = studentBo.getStudents(newValue);
+                ObservableList<StudentTm> studentTmObservableList = FXCollections.observableArrayList();
+                for (ResponseStudentDto st:students){
+                    Button btnDelete=new Button("Delete");
+                    studentTmObservableList.add(new StuGIT ADD dentTm(
+                            st.getId(),
+                            st.getName(),
+                            st.getAddress(),
+                            new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()).toString(),
+                          btnDelete
+                    ));
+                }
+            tblStudent.setItems(studentTmObservableList);
 
-            for (Student st:studentList){
-
-
-                    Button btn=new Button("Delete");
-                    StudentTm tm=new StudentTm(
-                            st.getStudentId(),
-                            st.getStudentName(),
-                            st.getStudentAddress(),
-                            new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()),
-                            btn
-                    );
-                    btn.setOnAction(event -> {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this student "
-                                , ButtonType.YES, ButtonType.NO);
-                        alert.showAndWait();
-
-                        if (alert.getResult()==ButtonType.YES){
-                         try{
-                             boolean isDelete=deleteStudent(st);
-                             new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully").show();
-                             setTableData(searchText);
-                             setStudentId();
-                         }catch (SQLException|ClassNotFoundException e){}
-
-                        }
-
-
-                    });
-                    studentTm.add(tm);
-
-
-            }
-            tblStudent.setItems(studentTm);
-        }catch (SQLException | ClassNotFoundException e){
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
 
