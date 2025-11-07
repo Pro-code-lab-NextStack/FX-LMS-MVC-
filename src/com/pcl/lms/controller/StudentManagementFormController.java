@@ -102,7 +102,7 @@ public class StudentManagementFormController {
                         alert.showAndWait();
                         if (alert.getResult()==ButtonType.YES){
                             try {
-                                boolean isDelted = studentBo.deleteStudent(st.getId());
+                                boolean isDelted = deleteStudent(st.getId());
                                 if (isDelted){
                                     new Alert(Alert.AlertType.INFORMATION, "Student deleted").show();
                                     setTableData(searchText);
@@ -124,10 +124,10 @@ public class StudentManagementFormController {
 
     }
 
-    private boolean deleteStudent(Student st) throws SQLException, ClassNotFoundException {
+    private boolean deleteStudent(String st) throws SQLException, ClassNotFoundException {
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement ps = connection.prepareStatement("DELETE FROM student WHERE id=?");
-        ps.setString(1, st.getStudentId());
+        ps.setString(1, st);
        return ps.executeUpdate()>0;
     }
 
@@ -169,16 +169,21 @@ public class StudentManagementFormController {
 
 
             }else{
+                boolean isUpdated = studentBo.updateStudent(new RequestStudentDto(
+                        txtStudentId.getText(),
+                        txtStudentName.getText(),
+                        txtAddress.getText(),
+                        Date.from(dteDob.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+                ));
 
-
-               /* if (updateStudent(student,userEmail)) {
+                if (isUpdated) {
 
                     new Alert(Alert.AlertType.INFORMATION,"Student Updated").show();
                     setStudentId();
                     clearFields();
                     setTableData(searchText);
                     btnSave.setText("Save");
-                }*/
+                }
 
             }
         }catch (SQLException|ClassNotFoundException e){

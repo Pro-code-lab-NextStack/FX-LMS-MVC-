@@ -5,12 +5,14 @@ import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.cutom.StudentDao;
 import com.pcl.lms.entity.Student;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDaoImpl implements StudentDao {
+public  class StudentDaoImpl implements StudentDao {
     @Override
     public boolean save(Student student) throws SQLException, ClassNotFoundException {
       return   CrudUtill.execute("INSERT INTO student VALUES(?,?,?,?,?)",
@@ -21,16 +23,27 @@ public class StudentDaoImpl implements StudentDao {
                 "@gmail.com"
         );
     }
-
     @Override
-    public boolean update(Student student) {
+    public boolean delete(String id) throws SQLException, ClassNotFoundException{
         return false;
     }
 
     @Override
-    public boolean delete(String studentId) throws SQLException, ClassNotFoundException {
+    public boolean update(Student student) throws SQLException, ClassNotFoundException {
+        return CrudUtill.execute("UPDATE student SET name=?,address=?,dob=? WHERE id=?",
+                student.getName(),
+                student.getAddress(),
+                student.getDob(),
+                student.getId()
+        );
+    }
 
-       return CrudUtill.execute("DELETE FROM student WHERE id=?",studentId);
+
+    public boolean delete(String studentId, Connection connection) throws SQLException, ClassNotFoundException {
+
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM student WHERE id=?");
+        ps.setString(1, studentId);
+        return ps.executeUpdate()>0;
     }
 
     @Override
