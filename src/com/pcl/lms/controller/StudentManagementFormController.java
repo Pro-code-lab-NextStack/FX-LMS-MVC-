@@ -97,6 +97,23 @@ public class StudentManagementFormController {
                           st.getDob(),
                           btnDelete
                     ));
+                    btnDelete.setOnAction((event) -> {
+                       Alert alert= new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES,ButtonType.NO);
+                        alert.showAndWait();
+                        if (alert.getResult()==ButtonType.YES){
+                            try {
+                                boolean isDelted = studentBo.deleteStudent(st.getId());
+                                if (isDelted){
+                                    new Alert(Alert.AlertType.INFORMATION, "Student deleted").show();
+                                    setTableData(searchText);
+                                    setStudentId();
+
+                                }
+                            } catch (SQLException | ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
                 }
             tblStudent.setItems(studentTmObservableList);
 

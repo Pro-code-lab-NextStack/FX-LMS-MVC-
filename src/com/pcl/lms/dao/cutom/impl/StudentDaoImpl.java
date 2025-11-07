@@ -1,5 +1,6 @@
 package com.pcl.lms.dao.cutom.impl;
 
+import com.pcl.lms.dao.CrudDao;
 import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.cutom.StudentDao;
 import com.pcl.lms.entity.Student;
@@ -27,8 +28,9 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public boolean delete(String s) {
-        return false;
+    public boolean delete(String studentId) throws SQLException, ClassNotFoundException {
+
+       return CrudUtill.execute("DELETE FROM student WHERE id=?",studentId);
     }
 
     @Override

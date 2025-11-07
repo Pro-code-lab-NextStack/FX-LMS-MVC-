@@ -32,7 +32,6 @@ public class StudentBoImpl implements StudentBo {
                 Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(requestStudentDto.getDob())),
                 Session.getEmail()
         ));
-
     }
 
     @Override
@@ -54,5 +53,10 @@ public class StudentBoImpl implements StudentBo {
 
         }
         return responseStudentDtoList;
+    }
+
+    @Override
+    public boolean deleteStudent(String studentId) throws SQLException, ClassNotFoundException {
+       return studentDao.delete(studentId);
     }
 }
