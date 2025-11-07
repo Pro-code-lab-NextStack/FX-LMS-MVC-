@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,8 +44,9 @@ public class TeacherManagementFormController {
     public TableColumn<TeacherTm,String> colAddress;
     public TableColumn<TeacherTm,Button> colOption;
     String searchText="";
+    TeacherBoImpl teacherBo=BoFactory.getInstance().getBo(BoType.TEACHER);
 
-    TeacherBoImpl teacherBo= BoFactory.getInstance().getBo(BoType.TEACHER);
+
     public void initialize(){
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colContact.setCellValueFactory(new PropertyValueFactory<>("contact"));
@@ -78,10 +80,10 @@ public class TeacherManagementFormController {
 
     private void setTeacherData(String searchText) {
         try{
-            ArrayList <Teacher> students =fetchTeachers(searchText);
+            List<RequestTeacherDto> students =teacherBo.getTeachers(searchText);
             ObservableList <TeacherTm> teacherObList = FXCollections.observableArrayList();
 
-            for (Teacher teacher:students){
+            for (RequestTeacherDto teacher:students){
                     Button btn = new Button("Delete");
                     TeacherTm teacherTm = new TeacherTm(
                             teacher.getId(),
@@ -133,22 +135,7 @@ public class TeacherManagementFormController {
         return ps.executeUpdate()>0;
     }
 
-    private ArrayList<Teacher> fetchTeachers(String searchText) throws SQLException, ClassNotFoundException {
-       ArrayList<Teacher> teachers = new ArrayList<>();
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM teacher WHERE name LIKE ?");
-        ps.setString(1,"%"+searchText+"%");
-        ResultSet set = ps.executeQuery();
-        while(set.next()){
-            teachers.add(new Teacher
-                    (set.getString(2),
-                      set.getString(1),
-                       set.getString(3),
-                            set.getString(4))
-                    );
-        }
-        return teachers;
-    }
+
 
     private void setTeacherId() {
 
@@ -245,15 +232,7 @@ public class TeacherManagementFormController {
         return  ps.executeUpdate()>0;
     }
 
-    private boolean saveTeacher(Teacher teacher) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO teacher VALUES (?,?,?,?)");
-        ps.setString(1,teacher.getId());
-        ps.setString(2,teacher.getName());
-        ps.setString(3,teacher.getContact());
-        ps.setString(4,teacher.getAddress());
-        return ps.executeUpdate()>0;
-    }
+
 
     private void clearFields() {
         txtTeacherName.clear();
