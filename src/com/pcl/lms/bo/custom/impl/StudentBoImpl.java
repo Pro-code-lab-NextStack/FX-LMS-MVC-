@@ -45,7 +45,7 @@ public class StudentBoImpl implements StudentBo {
                     student.getId(),
                     student.getName(),
                     student.getAddress(),
-                    new SimpleDateFormat("yyyy-MM-dd").format(student.getDob()),
+                   student.getDob().toString(),
                     student.getUser_email()
 
 

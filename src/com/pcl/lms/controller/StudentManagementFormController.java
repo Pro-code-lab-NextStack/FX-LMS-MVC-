@@ -90,11 +90,11 @@ public class StudentManagementFormController {
                 ObservableList<StudentTm> studentTmObservableList = FXCollections.observableArrayList();
                 for (ResponseStudentDto st:students){
                     Button btnDelete=new Button("Delete");
-                    studentTmObservableList.add(new StuGIT ADD dentTm(
+                    studentTmObservableList.add(new StudentTm(
                             st.getId(),
                             st.getName(),
                             st.getAddress(),
-                            new SimpleDateFormat("yyyy-MM-dd").format(st.getDob()).toString(),
+                          st.getDob(),
                           btnDelete
                     ));
                 }
