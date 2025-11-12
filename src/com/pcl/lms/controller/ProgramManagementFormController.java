@@ -5,6 +5,7 @@ import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.BoFactory;
 import com.pcl.lms.bo.custom.ProgrammeBo;
 import com.pcl.lms.dto.request.RequestProgrameDto;
+import com.pcl.lms.dto.response.ResponseProgramDto;
 import com.pcl.lms.model.Modules;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Teacher;
@@ -25,6 +26,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ProgramManagementFormController {
@@ -91,10 +93,25 @@ public class ProgramManagementFormController {
 
     private void loadProgrammeData(String searchText) {
     try {
-        ObservableList<ProgrammeTm> observableList= fetchProgramDetails(searchText);
+        List<ResponseProgramDto> responseProgramDtos = programmeBo.fetchProgramByName(searchText);
+        ObservableList<ProgrammeTm> observableList=FXCollections.observableArrayList();
 
+        for (ResponseProgramDto dto:responseProgramDtos){
+            Button btnDelete=new Button("Delete");
+            Button btnModules=new Button("Modules");
+            observableList.add(new ProgrammeTm(
+                    dto.getId(),
+                    dto.getName(),
+                    dto.getTeacher(),
+                    btnModules,
+                    dto.getCost(),
+                    btnDelete
+                    ));
 
+        }
         tblProgramme.setItems(observableList);
+
+
     }catch (SQLException|ClassNotFoundException e){
         e.printStackTrace();
     }
