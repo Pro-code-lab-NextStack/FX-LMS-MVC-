@@ -2,8 +2,7 @@ package com.pcl.lms.bo.custom.impl;
 
 import com.pcl.lms.bo.custom.UserBo;
 import com.pcl.lms.dao.DaoFactory;
-import com.pcl.lms.dao.SuperDao;
-import com.pcl.lms.dao.cutom.impl.UserDaoImpl;
+import com.pcl.lms.dao.custom.impl.UserDaoImpl;
 import com.pcl.lms.dto.request.RequestUserDto;
 import com.pcl.lms.dto.response.ResponseUserDto;
 import com.pcl.lms.entity.User;

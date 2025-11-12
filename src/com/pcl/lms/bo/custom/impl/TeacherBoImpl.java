@@ -2,7 +2,7 @@ package com.pcl.lms.bo.custom.impl;
 
 import com.pcl.lms.bo.custom.TeacherBo;
 import com.pcl.lms.dao.DaoFactory;
-import com.pcl.lms.dao.cutom.impl.TeacherDaoImpl;
+import com.pcl.lms.dao.custom.impl.TeacherDaoImpl;
 import com.pcl.lms.dto.request.RequestTeacherDto;
 import com.pcl.lms.entity.Teacher;
 import com.pcl.lms.utill.DaoType;
@@ -37,5 +37,15 @@ public class TeacherBoImpl implements TeacherBo {
            ));
         }
         return requestTeacherDtos;
+    }
+
+    @Override
+    public boolean updateTeacher(RequestTeacherDto requestTeacherDto) throws SQLException, ClassNotFoundException {
+     return  teacherDao.update(new Teacher(
+                requestTeacherDto.getId(),
+                requestTeacherDto.getName(),
+                requestTeacherDto.getContact(),
+                requestTeacherDto.getAddress()
+        ));
     }
 }

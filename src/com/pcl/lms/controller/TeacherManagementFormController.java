@@ -106,7 +106,7 @@ public class TeacherManagementFormController {
 
                                     return;
                                 }
-                                new Alert(Alert.AlertType.WARNING,"some thing went wrong").show();
+                                new Alert(Alert.AlertType.WARNING,"something went wrong").show();
 
                             }catch(ClassNotFoundException | SQLException e){
                                 e.printStackTrace();
@@ -206,7 +206,14 @@ public class TeacherManagementFormController {
 
         }else{
 
-            boolean isUpdate=updateTeacher(teacher);
+            boolean isUpdate=teacherBo.updateTeacher(
+                    new RequestTeacherDto(
+                            txtTeacherId.getText(),
+                            txtTeacherName.getText(),
+                            txtContact.getText(),
+                            txtAddress.getText()
+                    )
+            );
             if (isUpdate) {
                 setTeacherData(searchText);
                 clearFields();
@@ -222,15 +229,6 @@ public class TeacherManagementFormController {
 
     }
 
-    private boolean updateTeacher(Teacher teacher) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE teacher SET name=?,contact=?,address=? WHERE id=?");
-        ps.setString(1,teacher.getName());
-        ps.setString(2,teacher.getContact());
-        ps.setString(3,teacher.getAddress());
-        ps.setString(4,teacher.getId());
-        return  ps.executeUpdate()>0;
-    }
 
 
 

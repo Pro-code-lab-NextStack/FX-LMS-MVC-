@@ -1,9 +1,9 @@
 package com.pcl.lms.dao;
 
-import com.pcl.lms.dao.cutom.UserDao;
-import com.pcl.lms.dao.cutom.impl.StudentDaoImpl;
-import com.pcl.lms.dao.cutom.impl.TeacherDaoImpl;
-import com.pcl.lms.dao.cutom.impl.UserDaoImpl;
+import com.pcl.lms.dao.custom.impl.ProgramDaoImpl;
+import com.pcl.lms.dao.custom.impl.StudentDaoImpl;
+import com.pcl.lms.dao.custom.impl.TeacherDaoImpl;
+import com.pcl.lms.dao.custom.impl.UserDaoImpl;
 import com.pcl.lms.utill.DaoType;
 
 public class DaoFactory {
@@ -23,6 +23,8 @@ public class DaoFactory {
                 return(T) new StudentDaoImpl();
             case TEACHER:
                 return (T) new TeacherDaoImpl();
+             case  PROGRAME:
+                 return(T) new ProgramDaoImpl();
                 default:
                     return  null;
         }

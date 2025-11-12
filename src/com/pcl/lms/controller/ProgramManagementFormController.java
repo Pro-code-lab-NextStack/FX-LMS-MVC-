@@ -2,9 +2,13 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.ProgrammeBo;
+import com.pcl.lms.dto.request.RequestProgrameDto;
 import com.pcl.lms.model.Modules;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Teacher;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.view.tm.ModulesTm;
 import com.pcl.lms.view.tm.ProgrammeTm;
 import javafx.collections.FXCollections;
@@ -48,6 +52,8 @@ public class ProgramManagementFormController {
    private String searchText="";
     public static String programIdForModules;
 
+
+    ProgrammeBo programmeBo= BoFactory.getInstance().getBo(BoType.PROGRAME);
     public void initialize() {
         colModuleId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colModuleName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -267,13 +273,16 @@ public class ProgramManagementFormController {
         }
         try {
             if (btnSave.getText().equals("Save")) {
-                boolean isSaved=saveProgram(new Programme(
-                        txtProgramId.getText(),
-                        txtProgramName.getText(),
-                        Double.parseDouble(txtCost.getText()),
-                        splitId(cbxTeacher.getValue()),
-                        selectedModules
-                ));
+                programmeBo.saveProgram(
+                        new RequestProgrameDto(
+                                txtProgramId.getText(),
+                                txtProgramName.getText(),
+                                Double.parseDouble(txtCost.getText()),
+                                cbxTeacher.getValue(),
+                                selectedModules
+
+                        )
+                );
 
                 setProgrammeId();
                 clearFields();

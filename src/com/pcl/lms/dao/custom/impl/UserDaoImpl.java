@@ -1,12 +1,9 @@
-package com.pcl.lms.dao.cutom.impl;
+package com.pcl.lms.dao.custom.impl;
 
-import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.dao.CrudUtill;
-import com.pcl.lms.dao.cutom.UserDao;
+import com.pcl.lms.dao.custom.UserDao;
 import com.pcl.lms.entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;

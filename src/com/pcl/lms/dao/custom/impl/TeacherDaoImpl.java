@@ -1,7 +1,7 @@
-package com.pcl.lms.dao.cutom.impl;
+package com.pcl.lms.dao.custom.impl;
 
 import com.pcl.lms.dao.CrudUtill;
-import com.pcl.lms.dao.cutom.TeacherDao;
+import com.pcl.lms.dao.custom.TeacherDao;
 import com.pcl.lms.entity.Teacher;
 
 import java.sql.ResultSet;
@@ -22,7 +22,12 @@ public class TeacherDaoImpl implements TeacherDao {
 
     @Override
     public boolean update(Teacher teacher) throws SQLException, ClassNotFoundException {
-        return false;
+       return CrudUtill.execute("UPDATE teacher SET name=?,contact=?,address=? WHERE id=?",
+                teacher.getName(),
+                teacher.getContact(),
+                teacher.getAddress(),
+                teacher.getId()
+                );
     }
 
     @Override

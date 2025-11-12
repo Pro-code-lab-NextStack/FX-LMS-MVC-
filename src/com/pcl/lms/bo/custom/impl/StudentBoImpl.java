@@ -1,26 +1,18 @@
 package com.pcl.lms.bo.custom.impl;
 
-import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.custom.StudentBo;
 import com.pcl.lms.dao.DaoFactory;
 
-import com.pcl.lms.dao.cutom.impl.StudentDaoImpl;
-import com.pcl.lms.dao.cutom.impl.UserDaoImpl;
+import com.pcl.lms.dao.custom.impl.StudentDaoImpl;
 import com.pcl.lms.dto.request.RequestStudentDto;
 import com.pcl.lms.dto.response.ResponseStudentDto;
 import com.pcl.lms.entity.Student;
 import com.pcl.lms.env.Session;
 import com.pcl.lms.utill.DaoType;
-import com.pcl.lms.view.tm.StudentTm;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

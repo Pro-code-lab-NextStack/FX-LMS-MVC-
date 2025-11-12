@@ -1,8 +1,7 @@
-package com.pcl.lms.dao.cutom.impl;
+package com.pcl.lms.dao.custom.impl;
 
-import com.pcl.lms.dao.CrudDao;
 import com.pcl.lms.dao.CrudUtill;
-import com.pcl.lms.dao.cutom.StudentDao;
+import com.pcl.lms.dao.custom.StudentDao;
 import com.pcl.lms.entity.Student;
 
 import java.sql.Connection;
