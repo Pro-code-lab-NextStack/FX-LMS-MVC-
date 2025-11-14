@@ -2,8 +2,12 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.IntakeBo;
+import com.pcl.lms.dto.request.RequestIntakeDto;
 import com.pcl.lms.model.Intake;
 import com.pcl.lms.model.Programme;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.view.tm.IntakeTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,6 +45,7 @@ public class IntakeManagementFormController {
     public TableColumn<IntakeTm,Button> colOption;
     private String searchText="";
 
+    IntakeBo intakeBo= BoFactory.getInstance().getBo(BoType.INTAKE);
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -143,7 +148,7 @@ public class IntakeManagementFormController {
 
     private void setProgrammeData() {
         try {
-            ObservableList<String> programsObList =fetchPrograms();
+            ObservableList<String> programsObList =intakeBo.getProgramListForCombo();
             cmbProgram.setItems(programsObList);
         }catch (SQLException|ClassNotFoundException e) {
             e.printStackTrace();
@@ -152,47 +157,19 @@ public class IntakeManagementFormController {
 
     }
 
-    private ObservableList<String> fetchPrograms() throws SQLException, ClassNotFoundException {
-        ObservableList<String> programsObList = FXCollections.observableArrayList();
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM program");
-        ResultSet set = ps.executeQuery();
-        while(set.next()){
-           programsObList.add(set.getString(1)+"-"+set.getString(2));
-        }
-        return programsObList;
-    }
+
 
     private void setIntakeId() {
         try {
-            String lastIntakeId =fetchLastIntakeId();
+            txtId.setText(intakeBo.getLastIntakeId());
 
-            if (lastIntakeId!=null){
-
-                String[] split = lastIntakeId.split("-");
-                int lastDigit = Integer.parseInt(split[1]);
-                lastDigit++;
-                txtId.setText("I-"+lastDigit);
-                return;
-            }
-            txtId.setText("I-1");
         }catch (SQLException|ClassNotFoundException e){
             e.printStackTrace();
         }
 
     }
 
-    private String fetchLastIntakeId() throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps =
-                connection.prepareStatement
-                        ("SELECT id FROM intake ORDER BY CAST(SUBSTRING(id,3)AS UNSIGNED)DESC LIMIT 1");
-        ResultSet set = ps.executeQuery();
-        if (set.next()) {
-            return set.getString(1);
-        }
-        return null;
-    }
+
 
     public void newIntakeOnAction(ActionEvent actionEvent) {
     }
@@ -210,16 +187,29 @@ public class IntakeManagementFormController {
         );
         try{
             if (btnSave.getText().equals("Save")) {
-                boolean isSaved=saveIntake(intake);
 
-                new Alert(Alert.AlertType.INFORMATION, "Saved").show();
-                setIntakeId();
-                setProgrammeData();
-                clearField();
-                loadTableData(searchText);
+                boolean isSaved=intakeBo.saveIntake(new RequestIntakeDto(
+                        txtId.getId(),
+                        txtName.getText(),
+                        Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        cmbProgram.getValue()
+                ));
+                if (isSaved){
+                    new Alert(Alert.AlertType.INFORMATION, "Saved").show();
+                    setIntakeId();
+                    setProgrammeData();
+                    clearField();
+                    loadTableData(searchText);
+                }
+
+
 
             }else{
-                boolean isUpdated=updateIntake(intake);
+                boolean isUpdated=intakeBo.updateIntake(new RequestIntakeDto(
+                        txtId.getId(),
+                        txtName.getText(),
+                        Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        cmbProgram.getValue()));
                 if (isUpdated) {
 
                     new Alert(Alert.AlertType.INFORMATION, "Update"+intake.getId()).show();
@@ -237,33 +227,11 @@ public class IntakeManagementFormController {
         
     }
 
-    private boolean updateIntake(Intake intake) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement
-                ("UPDATE intake SET name=?,date=?,program_id=? WHERE id=? ");
-        ps.setString(1,intake.getName());
-        ps.setObject(2,intake.getDate());
-        ps.setString(3,splitId(intake.getProgramme()));
-        ps.setString(4,intake.getId());
-        return ps.executeUpdate()>0;
 
-    }
 
-    private boolean saveIntake(Intake intake) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO intake VALUES(?,?,?,?)");
-        ps.setString(1,intake.getId());
-        ps.setString(2,intake.getName());
-        ps.setObject(3,intake.getDate());
-        ps.setString(4,splitId(intake.getProgramme()));
-        return ps.executeUpdate()>0;
 
-    }
 
-    private String splitId(String value) {
-        String[] split = value.split("-");
-        return  split[0].trim()+"-"+split[1].trim();
-    }
+
 
     private void clearField() {
         txtName.clear();
