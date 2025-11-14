@@ -13,6 +13,8 @@ import java.util.List;
 public class IntakeDaoImpl implements IntakeDao {
     @Override
     public boolean save(Intake intake) throws SQLException, ClassNotFoundException {
+        System.out.println(intake.getId());
+
       return   CrudUtill.execute("INSERT INTO intake VALUES(?,?,?,?)",
                 intake.getId(),
                 intake.getName(),
@@ -23,8 +25,8 @@ public class IntakeDaoImpl implements IntakeDao {
 
     @Override
     public boolean update(Intake intake) throws SQLException, ClassNotFoundException {
-       return CrudUtill.execute("UPDATE intake SET name=?,date=?,program_id WHERE id=?",
-        intake.getName(),
+       return CrudUtill.execute("UPDATE intake SET name=?,date=?,program_id=? WHERE id=?",
+                intake.getName(),
                 intake.getDate(),
                 intake.getProgramId(),
                 intake.getId()

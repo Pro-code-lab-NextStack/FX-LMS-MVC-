@@ -179,21 +179,21 @@ public class IntakeManagementFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
-        Intake intake=new Intake(
-                txtId.getText() ,
-                Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()) ,
-                txtName.getText() ,
-                cmbProgram.getValue()
-        );
+        String cmbValue=cmbProgram.getValue();
+
+
         try{
             if (btnSave.getText().equals("Save")) {
 
-                boolean isSaved=intakeBo.saveIntake(new RequestIntakeDto(
-                        txtId.getId(),
+
+               boolean isSaved=intakeBo.saveIntake(new RequestIntakeDto(
+                        txtId.getText(),
                         txtName.getText(),
                         Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                        cmbProgram.getValue()
+                        cmbValue
                 ));
+
+
                 if (isSaved){
                     new Alert(Alert.AlertType.INFORMATION, "Saved").show();
                     setIntakeId();
@@ -206,13 +206,13 @@ public class IntakeManagementFormController {
 
             }else{
                 boolean isUpdated=intakeBo.updateIntake(new RequestIntakeDto(
-                        txtId.getId(),
+                        txtId.getText(),
                         txtName.getText(),
                         Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                         cmbProgram.getValue()));
                 if (isUpdated) {
 
-                    new Alert(Alert.AlertType.INFORMATION, "Update"+intake.getId()).show();
+                    new Alert(Alert.AlertType.INFORMATION, "Update").show();
                     clearField();
                     loadTableData(searchText);
                     setIntakeId();

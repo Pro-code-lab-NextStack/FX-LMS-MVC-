@@ -19,11 +19,12 @@ public class IntakeBoImpl implements IntakeBo {
     IntakeDao intakeDao= DaoFactory.getInstance().getDao(DaoType.INTAKE);
     @Override
     public boolean saveIntake(RequestIntakeDto requestIntakeDto) throws SQLException, ClassNotFoundException {
-     return    intakeDao.save(new Intake(
+        System.out.println(  requestIntakeDto.getIntakeId()+"from bo");
+        return    intakeDao.save(new Intake(
                 requestIntakeDto.getIntakeId(),
                 requestIntakeDto.getIntakeName(),
                 Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(requestIntakeDto.getDate())),
-                requestIntakeDto.getProgram()
+            splitId(requestIntakeDto.getProgram())
         ));
     }
 
@@ -34,7 +35,7 @@ public class IntakeBoImpl implements IntakeBo {
                         requestIntakeDto.getIntakeId(),
                         requestIntakeDto.getIntakeName(),
                         Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(requestIntakeDto.getDate())),
-                       splitId( requestIntakeDto.getProgram())
+                        splitId(requestIntakeDto.getProgram())
                 ));
 
     }
@@ -51,10 +52,12 @@ public class IntakeBoImpl implements IntakeBo {
     @Override
     public String getLastIntakeId() throws SQLException, ClassNotFoundException {
         Intake lastIntake = intakeDao.getLastIntake();
+
         if (lastIntake!=null) {
             String lastId = lastIntake.getId();
             String[] split = lastId.split("-");
-            int lastDigit = Integer.parseInt(split[1]);
+            String lastCharAsString=split[1];
+            int lastDigit = Integer.parseInt(lastCharAsString);
             lastDigit++;
             String genaratedID = "I-" + lastDigit;
             return genaratedID;
