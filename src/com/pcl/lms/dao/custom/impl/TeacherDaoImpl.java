@@ -4,6 +4,8 @@ import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.custom.TeacherDao;
 import com.pcl.lms.entity.Teacher;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -58,5 +60,12 @@ public class TeacherDaoImpl implements TeacherDao {
             ));
         }
         return teacherList;
+    }
+
+    @Override
+    public boolean deleteTeacherById(String id, Connection conn) throws SQLException, ClassNotFoundException {
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM teacher WHERE id=?");
+        ps.setString(1,id);
+       return ps.executeUpdate()>0;
     }
 }
