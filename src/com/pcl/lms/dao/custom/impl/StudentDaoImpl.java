@@ -3,6 +3,7 @@ package com.pcl.lms.dao.custom.impl;
 import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.custom.StudentDao;
 import com.pcl.lms.entity.Student;
+import com.pcl.lms.env.Session;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ public  class StudentDaoImpl implements StudentDao {
                 student.getName(),
                 student.getAddress(),
                 student.getDob(),
-                "@gmail.com"
+              Session.getEmail()
         );
     }
     @Override

@@ -5,11 +5,11 @@ public class Session {
 
 
     public static String getEmail() {
-        return email;
+        return Session.email;
     }
 
     public static void setEmail(String email) {
-        email = email;
+      Session. email = email;
     }
     public static void clear() {
         email=null;

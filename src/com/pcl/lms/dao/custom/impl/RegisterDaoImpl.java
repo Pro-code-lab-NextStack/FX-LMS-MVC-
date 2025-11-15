@@ -55,5 +55,6 @@ public class RegisterDaoImpl implements RegisterDao {
         PreparedStatement ps = conn.prepareStatement("DELETE FROM enroll WHERE student_id=?");
         ps.setString(1, id);
        return ps.executeUpdate()>0;
+
     }
 }

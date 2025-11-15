@@ -54,6 +54,7 @@ public class LoginFormController {
             if (loginState != null) {
                 if (loginState.getStatusCode()==200){
                     new Alert(Alert.AlertType.INFORMATION, "Login Successful!").show();
+                    Session.setEmail(loginState.getEmail());
                     Session.getEmail();
                     setUi("DashboardForm");
                 }else{
