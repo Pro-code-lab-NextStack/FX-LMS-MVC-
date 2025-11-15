@@ -2,9 +2,13 @@ package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.RegisterBo;
+import com.pcl.lms.bo.custom.StudentBo;
 import com.pcl.lms.model.Enroll;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
+import com.pcl.lms.utill.BoType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class RegistrationFormController {
     public TextField txtId;
@@ -32,7 +37,7 @@ public class RegistrationFormController {
     public AnchorPane context;
     String searchText = "";
     public AnchorPane root;
-
+    RegisterBo registerBo= BoFactory.getInstance().getBo(BoType.REGISTRATION);
     public void initialize(){
         setStudentId();
         setStudentData(searchText);
@@ -61,9 +66,13 @@ public class RegistrationFormController {
 
     private void setStudentData(String searchText) {
         try {
-            ObservableList<String> studentObList = fetchStudents(searchText);
 
-                cmbStudent.setItems(studentObList);
+            ObservableList<String> studentObList = FXCollections.observableArrayList();
+            List<String> studentForComboByName = registerBo.findStudentForComboByName(searchText);
+            for (String student:studentForComboByName){
+                studentObList.add(student);
+            }
+            cmbStudent.setItems(studentObList);
 
         }catch (SQLException|ClassNotFoundException e){
             e.printStackTrace();
@@ -72,19 +81,7 @@ public class RegistrationFormController {
 
     }
 
-    private ObservableList<String> fetchStudents(String searchText) throws SQLException, ClassNotFoundException {
-        ObservableList<String> studentObList=FXCollections.observableArrayList();
-        studentObList.clear();
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM student WHERE name LIKE?");
-        ps.setString(1, "%"+searchText+"%");
-        ResultSet set = ps.executeQuery();
-        while (set.next()){
-            studentObList.add(set.getString(1)+"-"+set.getString(2));
-        }
-        return studentObList;
 
-    }
 
     private void setProgramData() {
         try{

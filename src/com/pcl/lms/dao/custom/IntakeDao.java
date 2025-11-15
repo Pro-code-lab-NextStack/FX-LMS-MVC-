@@ -10,5 +10,6 @@ import java.util.List;
 public interface IntakeDao extends CrudDao<Intake,String> {
     public Intake getLastIntake() throws SQLException, ClassNotFoundException;
     public List<Program> getProgramList() throws SQLException, ClassNotFoundException;
+    public List<Intake> getIntakeByName(String searchText) throws SQLException, ClassNotFoundException;
 
 }

@@ -24,6 +24,8 @@ public class BoFactory {
                 return (T) new ProgrammeBoImpl();
              case INTAKE:
                  return (T) new IntakeBoImpl();
+             case REGISTRATION:
+                 return (T) new RegisterBoImpl();
                 default:
                     return null;
         }

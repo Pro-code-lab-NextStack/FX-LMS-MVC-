@@ -5,6 +5,7 @@ import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.BoFactory;
 import com.pcl.lms.bo.custom.IntakeBo;
 import com.pcl.lms.dto.request.RequestIntakeDto;
+import com.pcl.lms.dto.response.ResponseIntakeDto;
 import com.pcl.lms.model.Intake;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.utill.BoType;
@@ -27,6 +28,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class IntakeManagementFormController {
@@ -79,40 +81,36 @@ public class IntakeManagementFormController {
 
     private void loadTableData(String searchText) {
         try {
-            ObservableList<Intake> intakeFromMysql= fetchIntakeData(searchText);
-
-            ObservableList<IntakeTm> intakeObList = FXCollections.observableArrayList();
-            intakeObList.clear();
-            for (Intake intake:intakeFromMysql){
-
-                    Button btn=new Button("Delete");
-                    intakeObList.add(new IntakeTm(
-                            intake.getId(),
-                            intake.getDate(),
-                            intake.getName(),
-                            intake.getProgramme(),
-                            btn
-                    ));
-                    btn.setOnAction((event) -> {
-                        Alert delAlert=  new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES,ButtonType.NO);
-                        delAlert.showAndWait();
-                        if (delAlert.getResult()==ButtonType.YES){
-                            try {
-                                deleteIntake(intake);
-                                loadTableData(searchText);
-                                setIntakeId();
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            } catch (ClassNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-
-
+            List<ResponseIntakeDto> responseIntakeDtos = intakeBo.fetchIntakeByName(searchText);
+            ObservableList <IntakeTm> intakeTmList = FXCollections.observableArrayList();
+            for (ResponseIntakeDto responseIntakeDto : responseIntakeDtos) {
+                Button btn = new Button("Delete");
+                intakeTmList.add(new IntakeTm(
+                        responseIntakeDto.getId(),
+                        responseIntakeDto.getDate(),
+                        responseIntakeDto.getName(),
+                        responseIntakeDto.getProgram(),
+                        btn
+                ));
+                btn.setOnAction((event) -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES, ButtonType.NO);
+                    alert.showAndWait();
+                    if (alert.getResult()==ButtonType.YES) {
+                        try {
+                            intakeBo.deleteIntake(responseIntakeDto.getId());
+                            loadTableData(searchText);
+                            setIntakeId();
+                            new Alert(Alert.AlertType.INFORMATION, "Success").show();
+                        } catch (SQLException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
                         }
-                    });
+                    }
+                });
 
             }
-            tblIntake.setItems(intakeObList);
+            tblIntake.setItems(intakeTmList);
+
+
         }catch(SQLException|ClassNotFoundException e){
             e.printStackTrace();
         }

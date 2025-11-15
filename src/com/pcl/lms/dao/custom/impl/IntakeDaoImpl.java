@@ -78,4 +78,20 @@ public class IntakeDaoImpl implements IntakeDao {
         return programList;
     }
 
+    @Override
+    public List<Intake> getIntakeByName(String searchText) throws SQLException, ClassNotFoundException {
+            List<Intake> intakeList = new ArrayList<>();
+        ResultSet set =  CrudUtill.execute("SELECT * FROM intake WHERE name LIKE ?", searchText);
+        while (set.next()) {
+            intakeList.add(new Intake(
+                    set.getString(1),
+                    set.getString(2),
+                    set.getDate(3),
+                    set.getString(4)
+            ));
+        }
+        return intakeList;
+    }
+
+
 }

@@ -4,6 +4,7 @@ import com.pcl.lms.bo.custom.IntakeBo;
 import com.pcl.lms.dao.DaoFactory;
 import com.pcl.lms.dao.custom.IntakeDao;
 import com.pcl.lms.dto.request.RequestIntakeDto;
+import com.pcl.lms.dto.response.ResponseIntakeDto;
 import com.pcl.lms.entity.Intake;
 import com.pcl.lms.entity.Program;
 import com.pcl.lms.utill.DaoType;
@@ -13,6 +14,7 @@ import javafx.collections.ObservableList;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IntakeBoImpl implements IntakeBo {
@@ -74,5 +76,21 @@ public class IntakeBoImpl implements IntakeBo {
             programObList.add(pro.getId()+"-"+pro.getName());
         }
         return programObList;
+    }
+
+    @Override
+    public List<ResponseIntakeDto> fetchIntakeByName(String name) throws SQLException, ClassNotFoundException {
+        String searchText="%"+name+"%";
+        List<Intake> intakeByName = intakeDao.getIntakeByName(searchText);
+        List<ResponseIntakeDto> responseIntakeDtoList = new ArrayList<>();
+        for (Intake intake:intakeByName) {
+            responseIntakeDtoList.add(new ResponseIntakeDto(
+                    intake.getId(),
+                    intake.getName(),
+                    Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(intake.getDate())),
+                    intake.getProgramId()
+            ));
+        }
+        return responseIntakeDtoList;
     }
 }
