@@ -6,6 +6,7 @@ import com.pcl.lms.bo.BoFactory;
 import com.pcl.lms.bo.custom.ProgrammeBo;
 import com.pcl.lms.bo.custom.RegisterBo;
 import com.pcl.lms.bo.custom.StudentBo;
+import com.pcl.lms.dto.request.RequestRegisterDto;
 import com.pcl.lms.model.Enroll;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
@@ -39,6 +40,7 @@ public class RegistrationFormController {
     String searchText = "";
     public AnchorPane root;
     RegisterBo registerBo= BoFactory.getInstance().getBo(BoType.REGISTRATION);
+
     public void initialize(){
         setStudentId();
         setStudentData(searchText);
@@ -111,37 +113,15 @@ public class RegistrationFormController {
 
     public void saveOnAction(ActionEvent actionEvent) {
         try {
-            boolean isSaved=saveEnrollment(new Enroll(
-                    cmbStudent.getValue(),
-                    cmbProgram.getValue(),
-                    rbtnPaid.isSelected()
+            registerBo.registration(new RequestRegisterDto(
+                    rbtnPaid.isSelected(),cmbProgram.getValue(),cmbStudent.getValue()
             ));
-            if (isSaved) {
-                new Alert(Alert.AlertType.INFORMATION, "Success").show();
-
-            }
-
-
-        }catch (SQLException|ClassNotFoundException e){
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
-
-
-    }
-
-    private boolean saveEnrollment(Enroll enroll) throws SQLException, ClassNotFoundException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO enroll VALUES (?,?,?)");
-        ps.setString(1,spliteID(enroll.getProgramme()));
-        ps.setString(2,spliteID(enroll.getStudent()));
-        ps.setBoolean(3,enroll.isPaid());
-        return ps.executeUpdate()>0;
-    }
-
-    private String spliteID(String programme) {
-        String[] split = programme.split("-");
-        return split[0]+"-"+split[1];
     }
 
     private void setUi(String location) throws IOException {

@@ -24,6 +24,8 @@ public class DaoFactory {
                  return(T) new ProgramDaoImpl();
              case INTAKE:
                  return (T) new IntakeDaoImpl();
+            case REGISTER:
+                return (T) new RegisterDaoImpl();
                 default:
                     return  null;
         }
