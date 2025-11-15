@@ -4,6 +4,9 @@ import com.pcl.lms.dao.CrudUtill;
 import com.pcl.lms.dao.custom.RegisterDao;
 import com.pcl.lms.entity.Registration;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -35,5 +38,22 @@ public class RegisterDaoImpl implements RegisterDao {
     @Override
     public List<Registration> findAll() throws SQLException, ClassNotFoundException {
         return List.of();
+    }
+
+    @Override
+    public boolean isExists(String id) throws SQLException, ClassNotFoundException {
+      ResultSet set =CrudUtill.execute("SELECT * FROM enroll WHERE student_id=?",id);
+      if(set.next()){
+          return true;
+      }
+      return false;
+
+    }
+
+    @Override
+    public boolean deleteByTransaction(String id, Connection conn) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM enroll WHERE student_id=?");
+        ps.setString(1, id);
+       return ps.executeUpdate()>0;
     }
 }

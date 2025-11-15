@@ -1,8 +1,10 @@
 package com.pcl.lms.bo.custom.impl;
 
+import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.custom.StudentBo;
 import com.pcl.lms.dao.DaoFactory;
 
+import com.pcl.lms.dao.custom.RegisterDao;
 import com.pcl.lms.dao.custom.impl.StudentDaoImpl;
 import com.pcl.lms.dto.request.RequestStudentDto;
 import com.pcl.lms.dto.response.ResponseStudentDto;
@@ -10,7 +12,9 @@ import com.pcl.lms.entity.Student;
 import com.pcl.lms.env.Session;
 import com.pcl.lms.utill.DaoType;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +22,7 @@ import java.util.List;
 
 public class StudentBoImpl implements StudentBo {
     StudentDaoImpl studentDao= DaoFactory.getInstance().getDao(DaoType.STUDENT);
-   // EnrollDaoImpl enrollDao=DaoFactory.getInstance().getDao(DaoType.ENROLL);
+   RegisterDao registerDao=DaoFactory.getInstance().getDao(DaoType.REGISTER);
     @Override
     public boolean saveStudent(RequestStudentDto requestStudentDto) throws SQLException, ClassNotFoundException {
        return studentDao.save(new Student(
@@ -53,24 +57,36 @@ public class StudentBoImpl implements StudentBo {
 
     @Override
     public boolean deleteStudent(String studentId) throws SQLException, ClassNotFoundException {
-       /* Connection connection= DbConnection.getInstance().getConnection();
-        try {
-            connection.setAutoCommit(false);
-            boolean isStudentDeleted = studentDao.delete(studentId);
-            if (isEnrollDeleted && isStudentDeleted){
-                connection.commit();
-                return true;
-            }else {
-                connection.rollback();
+        System.out.println("St id"+studentId);
+        boolean isRegistered = registerDao.isExists(studentId);
+
+        if (isRegistered) {
+            Connection conn= DbConnection.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            try{
+                boolean isDeleted = registerDao.deleteByTransaction(studentId, conn);
+                if (isDeleted) {
+                    boolean isDeleted2 = studentDao.deleteByTransaction(studentId, conn);
+                    if (isDeleted2) {
+                        conn.commit();
+                        return true;
+                    }
+                }else {
+                    conn.rollback();
+                    return false;
+                }
+
+            }catch (Exception e){
+                conn.rollback();
                 return false;
+            }finally {
+                conn.setAutoCommit(true);
             }
-        }catch (SQLException e){
-            connection.rollback();
-            throw e;
-        }finally {
-            connection.setAutoCommit(true);
-        }*/
-        return false;
+        }
+          return   studentDao.delete(studentId);
+
+
+
     }
 
     @Override

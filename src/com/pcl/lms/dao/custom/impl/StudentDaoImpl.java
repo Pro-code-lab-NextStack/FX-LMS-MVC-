@@ -24,7 +24,7 @@ public  class StudentDaoImpl implements StudentDao {
     }
     @Override
     public boolean delete(String id) throws SQLException, ClassNotFoundException{
-        return false;
+      return CrudUtill.execute("DELETE FROM student WHERE id=?",id);
     }
 
     @Override
@@ -69,5 +69,12 @@ public  class StudentDaoImpl implements StudentDao {
             ));
         }
         return students;
+    }
+
+    @Override
+    public boolean deleteByTransaction(String id, Connection conn) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM student WHERE id=?");
+        ps.setString(1, id);
+       return ps.executeUpdate()>0;
     }
 }

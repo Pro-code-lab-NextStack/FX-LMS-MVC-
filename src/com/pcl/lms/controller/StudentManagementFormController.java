@@ -102,7 +102,7 @@ public class StudentManagementFormController {
                         alert.showAndWait();
                         if (alert.getResult()==ButtonType.YES){
                             try {
-                                boolean isDelted = deleteStudent(st.getId());
+                                boolean isDelted =studentBo.deleteStudent(st.getId());
                                 if (isDelted){
                                     new Alert(Alert.AlertType.INFORMATION, "Student deleted").show();
                                     setTableData(searchText);
