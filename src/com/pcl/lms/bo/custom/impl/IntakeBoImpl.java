@@ -8,6 +8,7 @@ import com.pcl.lms.dto.response.ResponseIntakeDto;
 import com.pcl.lms.entity.Intake;
 import com.pcl.lms.entity.Program;
 import com.pcl.lms.utill.DaoType;
+import com.pcl.lms.utill.tools.IdGenarator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -55,16 +56,11 @@ public class IntakeBoImpl implements IntakeBo {
     public String getLastIntakeId() throws SQLException, ClassNotFoundException {
         Intake lastIntake = intakeDao.getLastIntake();
 
-        if (lastIntake!=null) {
-            String lastId = lastIntake.getId();
-            String[] split = lastId.split("-");
-            String lastCharAsString=split[1];
-            int lastDigit = Integer.parseInt(lastCharAsString);
-            lastDigit++;
-            String genaratedID = "I-" + lastDigit;
-            return genaratedID;
+        if (lastIntake != null) {
+           return IdGenarator.generateId(lastIntake.getId());
         }
         return "I-1";
+
     }
 
     @Override
