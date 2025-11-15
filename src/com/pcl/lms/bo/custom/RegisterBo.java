@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RegisterBo extends SuperBo {
     public List<String> findStudentForComboByName(String text   ) throws SQLException, ClassNotFoundException;
+    public List<String> findProgramtForCombo() throws SQLException, ClassNotFoundException;
 }

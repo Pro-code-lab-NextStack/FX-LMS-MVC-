@@ -3,6 +3,7 @@ package com.pcl.lms.controller;
 import com.pcl.lms.DB.Database;
 import com.pcl.lms.DB.DbConnection;
 import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.ProgrammeBo;
 import com.pcl.lms.bo.custom.RegisterBo;
 import com.pcl.lms.bo.custom.StudentBo;
 import com.pcl.lms.model.Enroll;
@@ -85,13 +86,13 @@ public class RegistrationFormController {
 
     private void setProgramData() {
         try{
-            ObservableList<String> programObList = fetchPrograms();
-            if (!programObList.isEmpty()) {
-                cmbProgram.setItems(programObList);
+            ObservableList<String> programObList = FXCollections.observableArrayList();
+            List<String> programtForCombo = registerBo.findProgramtForCombo();
+            for(String program:programtForCombo){
+                programObList.add(program);
+            }
+            cmbProgram.setItems(programObList);
 
-            }else {
-            cmbProgram.setValue("Programms not found");
-        }
 
         }catch (SQLException|ClassNotFoundException e){
             e.printStackTrace();
@@ -100,17 +101,6 @@ public class RegistrationFormController {
 
     }
 
-    private ObservableList<String> fetchPrograms() throws SQLException, ClassNotFoundException {
-        ObservableList<String> programObList = FXCollections.observableArrayList();
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM program");
-        ResultSet set = ps.executeQuery();
-        while (set.next()){
-            programObList.add(set.getString(1).trim()+"-"+set.getString(2).trim());
-
-        }
-        return programObList;
-    }
 
     public void newRegistrationOnAction(ActionEvent actionEvent) {
     }

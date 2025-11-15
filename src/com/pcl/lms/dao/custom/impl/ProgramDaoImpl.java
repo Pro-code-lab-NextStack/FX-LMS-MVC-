@@ -37,8 +37,18 @@ public class ProgramDaoImpl implements ProgramDao {
     }
 
     @Override
-    public List<Program> findAll() {
-        return List.of();
+    public List<Program> findAll() throws SQLException, ClassNotFoundException {
+        ResultSet set = CrudUtill.execute("SELECT * FROM program");
+        List<Program> programList = new ArrayList<>();
+        while(set.next()){
+            programList.add(new Program(
+                    set.getString(1),
+                    set.getString(2),
+                    set.getDouble(3),
+                    set.getString(4)
+            ));
+        }
+        return programList;
     }
 
     @Override
