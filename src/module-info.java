@@ -5,6 +5,8 @@ module lms {
     requires jbcrypt;
     requires jakarta.mail;
     requires jakarta.activation;
+    requires java.sql;
+    requires mysql.connector.j;
 
     opens com.pcl.lms.controller to javafx.fxml;
     opens com.pcl.lms.model to javafx.base;

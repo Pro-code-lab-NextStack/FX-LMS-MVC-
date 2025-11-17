@@ -1,9 +1,16 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.ProgrammeBo;
+import com.pcl.lms.bo.custom.RegisterBo;
+import com.pcl.lms.bo.custom.StudentBo;
+import com.pcl.lms.dto.request.RequestRegisterDto;
 import com.pcl.lms.model.Enroll;
 import com.pcl.lms.model.Programme;
 import com.pcl.lms.model.Student;
+import com.pcl.lms.utill.BoType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +21,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 public class RegistrationFormController {
     public TextField txtId;
@@ -27,6 +39,7 @@ public class RegistrationFormController {
     public AnchorPane context;
     String searchText = "";
     public AnchorPane root;
+    RegisterBo registerBo= BoFactory.getInstance().getBo(BoType.REGISTRATION);
 
     public void initialize(){
         setStudentId();
@@ -55,35 +68,41 @@ public class RegistrationFormController {
     }
 
     private void setStudentData(String searchText) {
-        ObservableList<String> studentObList = FXCollections.observableArrayList();
-        studentObList.clear();
-        if(!Database.studentTable.isEmpty()){
-            for (Student st:Database.studentTable){
-                if (st.getStudentName().toLowerCase().contains(searchText.toLowerCase())){
-                    studentObList.add(st.getStudentId()+"-"+st.getStudentName());
-                }
+        try {
 
+            ObservableList<String> studentObList = FXCollections.observableArrayList();
+            List<String> studentForComboByName = registerBo.findStudentForComboByName(searchText);
+            for (String student:studentForComboByName){
+                studentObList.add(student);
             }
             cmbStudent.setItems(studentObList);
+
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
 
+
     }
+
+
 
     private void setProgramData() {
-        ObservableList<String> programObList = FXCollections.observableArrayList();
-        programObList.clear();
-
-
-        if (!Database.programmeTable.isEmpty()) {
-            for (Programme programme:Database.programmeTable){
-                programObList.add(programme.getProgrammeId()+"-"+programme.getProgrammeName());
+        try{
+            ObservableList<String> programObList = FXCollections.observableArrayList();
+            List<String> programtForCombo = registerBo.findProgramtForCombo();
+            for(String program:programtForCombo){
+                programObList.add(program);
             }
             cmbProgram.setItems(programObList);
-        }else {
-            cmbProgram.setValue("Programms not found");
+
+
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
 
+
     }
+
 
     public void newRegistrationOnAction(ActionEvent actionEvent) {
     }
@@ -93,17 +112,19 @@ public class RegistrationFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
-
-        Database.enrollTable.add(new Enroll(
-                cmbStudent.getValue(),
-                cmbProgram.getValue(),
-                rbtnPaid.isSelected()
-                ));
-
-        new Alert(Alert.AlertType.INFORMATION, "Success").show();
-
+        try {
+            boolean isSaved = registerBo.registration(new RequestRegisterDto(
+                    rbtnPaid.isSelected(), cmbProgram.getValue(), cmbStudent.getValue()
+            ));
+            if (isSaved)new Alert(Alert.AlertType.INFORMATION,"Registration Successfully Saved").show();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
     }
+
     private void setUi(String location) throws IOException {
         Stage stage =(Stage) context.getScene().getWindow();
         stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/pcl/lms/view/"+location+".fxml"))));

@@ -1,8 +1,14 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.IntakeBo;
+import com.pcl.lms.dto.request.RequestIntakeDto;
+import com.pcl.lms.dto.response.ResponseIntakeDto;
 import com.pcl.lms.model.Intake;
 import com.pcl.lms.model.Programme;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.view.tm.IntakeTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,8 +21,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class IntakeManagementFormController {
@@ -35,6 +47,7 @@ public class IntakeManagementFormController {
     public TableColumn<IntakeTm,Button> colOption;
     private String searchText="";
 
+    IntakeBo intakeBo= BoFactory.getInstance().getBo(BoType.INTAKE);
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -61,58 +74,100 @@ public class IntakeManagementFormController {
     private void setDataToForm(IntakeTm tm) {
         txtId.setText(tm.getId());
         txtName.setText(tm.getName());
-        dteStart.setValue(tm.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        dteStart.setValue(LocalDate.parse(tm.getDate().toString()));
         cmbProgram.setValue(tm.getProgramme());
         btnSave.setText("Update");
     }
 
     private void loadTableData(String searchText) {
-        ObservableList<IntakeTm> intakeObList = FXCollections.observableArrayList();
-        intakeObList.clear();
-        for (Intake intake:Database.intakeTable){
-            if (intake.getName().contains(searchText)){
-                Button btn=new Button("Delete");
-                intakeObList.add(new IntakeTm(
-                        intake.getId(),
-                        intake.getDate(),
-                        intake.getName(),
-                        intake.getProgramme(),
+        try {
+            List<ResponseIntakeDto> responseIntakeDtos = intakeBo.fetchIntakeByName(searchText);
+            ObservableList <IntakeTm> intakeTmList = FXCollections.observableArrayList();
+            for (ResponseIntakeDto responseIntakeDto : responseIntakeDtos) {
+                Button btn = new Button("Delete");
+                intakeTmList.add(new IntakeTm(
+                        responseIntakeDto.getId(),
+                        responseIntakeDto.getDate(),
+                        responseIntakeDto.getName(),
+                        responseIntakeDto.getProgram(),
                         btn
                 ));
                 btn.setOnAction((event) -> {
-                  Alert delAlert=  new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES,ButtonType.NO);
-                  delAlert.showAndWait();
-                  if (delAlert.getResult()==ButtonType.YES){
-                      Database.intakeTable.remove(intake);
-                      loadTableData(searchText);
-                      setIntakeId();
-                  }
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure", ButtonType.YES, ButtonType.NO);
+                    alert.showAndWait();
+                    if (alert.getResult()==ButtonType.YES) {
+                        try {
+                            intakeBo.deleteIntake(responseIntakeDto.getId());
+                            loadTableData(searchText);
+                            setIntakeId();
+                            new Alert(Alert.AlertType.INFORMATION, "Success").show();
+                        } catch (SQLException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 });
+
             }
+            tblIntake.setItems(intakeTmList);
+
+
+        }catch(SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
-        tblIntake.setItems(intakeObList);
+
+    }
+
+    private boolean deleteIntake(Intake intake) throws SQLException, ClassNotFoundException {
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM intake WHERE id = ?");
+        ps.setString(1,intake.getId().trim());
+        return ps.executeUpdate()>0;
+    }
+
+    private ObservableList<Intake> fetchIntakeData(String searchText) throws SQLException, ClassNotFoundException {
+        ObservableList <Intake> intakeObList = FXCollections.observableArrayList();
+        Connection connection = DbConnection.getInstance().getConnection();
+        PreparedStatement ps = connection.prepareStatement
+                ("SELECT i.id,i.name,i.date,p.id,p.name FROM intake i JOIN program p ON p.id=i.program_id WHERE i.name LIKE?");
+        ps.setString(1,"%"+searchText+"%");
+        ResultSet set = ps.executeQuery();
+        while (set.next()) {
+            intakeObList.add(new Intake(
+                    set.getString(1),
+                    set.getDate(3),
+                    set.getString(2),
+                    set.getString(4)+"-"+set.getString(5)
+            ));
+        }
+        return intakeObList;
+
+
     }
 
     private void setProgrammeData() {
-        ObservableList<String> programsObList = FXCollections.observableArrayList();
-        for (Programme temp:Database.programmeTable){
-            programsObList.add(temp.getProgrammeId()+"-"+temp.getProgrammeName());
+        try {
+            ObservableList<String> programsObList =intakeBo.getProgramListForCombo();
+            cmbProgram.setItems(programsObList);
+        }catch (SQLException|ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        cmbProgram.setItems(programsObList);
+
 
     }
+
+
 
     private void setIntakeId() {
-        if (!Database.intakeTable.isEmpty()){
-            Intake lastIntake = Database.intakeTable.get(Database.intakeTable.size() - 1);
-            String id = lastIntake.getId();
-            String[] split = id.split("-");
-            int lastDigit = Integer.parseInt(split[1]);
-            lastDigit++;
-            txtId.setText("I-"+lastDigit);
+        try {
+            txtId.setText(intakeBo.getLastIntakeId());
+
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
-        txtId.setText("I-1");
+
     }
+
+
 
     public void newIntakeOnAction(ActionEvent actionEvent) {
     }
@@ -122,35 +177,59 @@ public class IntakeManagementFormController {
     }
 
     public void saveOnAction(ActionEvent actionEvent) {
-        if (btnSave.getText().equals("Save")) {
-            Database.intakeTable.add(new Intake(
-                   txtId.getText() ,
-                   Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()) ,
-                    txtName.getText() ,
-                    cmbProgram.getValue()
-            ));
-            new Alert(Alert.AlertType.INFORMATION, "Saved").show();
-            setIntakeId();
-            setProgrammeData();
-            clearField();
-            loadTableData(searchText);
+        String cmbValue=cmbProgram.getValue();
 
-        }else{
-            Optional<Intake> selectedIntake = Database.intakeTable.stream().filter(e -> e.getId().equals(txtId.getText())).findFirst();
-            if (selectedIntake.isPresent()) {
-                selectedIntake.get().setName(txtName.getText());
-                selectedIntake.get().setDate(Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                selectedIntake.get().setProgramme(cmbProgram.getValue());
-                new Alert(Alert.AlertType.INFORMATION, "Update"+selectedIntake.get().getId()).show();
-                clearField();
-                loadTableData(searchText);
-                setIntakeId();
-                btnSave.setText("Save");
+
+        try{
+            if (btnSave.getText().equals("Save")) {
+
+
+               boolean isSaved=intakeBo.saveIntake(new RequestIntakeDto(
+                        txtId.getText(),
+                        txtName.getText(),
+                        Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        cmbValue
+                ));
+
+
+                if (isSaved){
+                    new Alert(Alert.AlertType.INFORMATION, "Saved").show();
+                    setIntakeId();
+                    setProgrammeData();
+                    clearField();
+                    loadTableData(searchText);
+                }
+
+
+
+            }else{
+                boolean isUpdated=intakeBo.updateIntake(new RequestIntakeDto(
+                        txtId.getText(),
+                        txtName.getText(),
+                        Date.from(dteStart.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        cmbProgram.getValue()));
+                if (isUpdated) {
+
+                    new Alert(Alert.AlertType.INFORMATION, "Update").show();
+                    clearField();
+                    loadTableData(searchText);
+                    setIntakeId();
+                    btnSave.setText("Save");
+                }
             }
+        }catch (SQLException|ClassNotFoundException e){
+            e.printStackTrace();
         }
+
         
         
     }
+
+
+
+
+
+
 
     private void clearField() {
         txtName.clear();

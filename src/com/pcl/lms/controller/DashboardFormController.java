@@ -1,10 +1,12 @@
 package com.pcl.lms.controller;
 
+import com.pcl.lms.env.Session;
 import com.pcl.lms.env.StaticResource;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -21,9 +23,11 @@ public class DashboardFormController {
     public Label lblCompany;
     public Label lblVersion;
     public AnchorPane context;
+    String userEmail;
 
     public void initialize(){
         setData();
+        System.out.println("DashboardFormController :  " + Session.getEmail());
     }
 
     private void setData() {
@@ -50,7 +54,12 @@ public class DashboardFormController {
     }
 
     public void studentManageOnAction(ActionEvent actionEvent) throws IOException {
-        setUi("StudentManagementForm");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pcl/lms/view/StudentManagementForm.fxml"));
+       Parent parent = loader.load();
+        StudentManagementFormController controller = loader.getController();
+        controller.setUserEmail(userEmail);
+       Stage stage= (Stage)context.getScene().getWindow();
+       stage.setScene(new Scene(parent));
 
     }
     public void navigateTeacherFormOnAction(ActionEvent actionEvent) throws IOException {
@@ -73,4 +82,5 @@ public class DashboardFormController {
     public void navigateIntakeFormOnAction(ActionEvent actionEvent) throws IOException {
         setUi("IntakeManagementForm");
     }
+
 }

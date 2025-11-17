@@ -1,8 +1,14 @@
 package com.pcl.lms.controller;
 
 import com.pcl.lms.DB.Database;
+import com.pcl.lms.DB.DbConnection;
+import com.pcl.lms.bo.BoFactory;
+import com.pcl.lms.bo.custom.impl.UserBoImpl;
+import com.pcl.lms.dto.response.ResponseUserDto;
+import com.pcl.lms.env.Session;
 import com.pcl.lms.env.StaticResource;
 import com.pcl.lms.model.User;
+import com.pcl.lms.utill.BoType;
 import com.pcl.lms.utill.security.PasswordManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -14,9 +20,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.util.Optional;
 
 public class LoginFormController {
@@ -25,7 +33,7 @@ public class LoginFormController {
     public Label lblVersion;
     public TextField txtEmail;
     public PasswordField txtPassword;
-
+    UserBoImpl userBo= BoFactory.getInstance().getBo(BoType.USER);
     public void initialize() {
         setStaticData();
     }
@@ -40,22 +48,34 @@ public class LoginFormController {
     public void navigateDashboardOnAction(ActionEvent actionEvent) throws IOException {
         String email = txtEmail.getText();
         String password = txtPassword.getText();
-        Optional<User> selectUser = Database.userTable.stream().filter(e -> e.getEmail().equals(email)).findFirst();
-            if (selectUser.isPresent()) {
 
-                if ( new PasswordManager().check(password, selectUser.get().getPassword())) {
-                    new Alert(Alert.AlertType.INFORMATION,"Welcome....").show();
+        try{
+            ResponseUserDto loginState = userBo.login(email, password);
+            if (loginState != null) {
+                if (loginState.getStatusCode()==200){
+                    new Alert(Alert.AlertType.INFORMATION, "Login Successful!").show();
+                    Session.setEmail(loginState.getEmail());
+                    Session.getEmail();
                     setUi("DashboardForm");
-                }else {
-                    new Alert(Alert.AlertType.ERROR, "Incorrect password!!!").show();
+                }else{
+                    new Alert(Alert.AlertType.ERROR, loginState.getMessage()).show();
                 }
+
             }else {
-                new Alert(Alert.AlertType.ERROR,"User not found!!!").show();
+                new Alert(Alert.AlertType.INFORMATION, "User Not Found").show();
             }
+
+
+        }catch (ClassNotFoundException|SQLException e){
+            e.printStackTrace();
+        }
+
 
 
 
     }
+
+
 
     public void navigateForgotPasswordOnAction(ActionEvent actionEvent) throws IOException {
         setUi("EmailVerificationForm");
